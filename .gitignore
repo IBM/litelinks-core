@@ -1,0 +1,22 @@
+
+*.class
+*.ozasmt
+*.paf
+*.ppf
+*_frameworksCLI*
+*_staging
+*epf_cache
+*ppf_cache
+ant.log
+bld.log
+build
+
+/*.epf
+/*.epf.gpf
+/bin
+
+# Ignore Eclipse files and directories
+/.project
+/.settings/
+/.classpath
+/target/
