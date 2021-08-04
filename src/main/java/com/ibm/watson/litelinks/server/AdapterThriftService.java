@@ -59,12 +59,12 @@ public class AdapterThriftService extends ThriftService {
      *                                     service interface (Iface), or doesn't have a no-arg constructor
      */
     public AdapterThriftService(Class<?> handlerClass) throws InvalidThriftClassException {
-		this.handlerClassName = handlerClass.getName();
+        this.handlerClassName = handlerClass.getName();
         try {
-			this.handlerConstr = handlerClass.getConstructor();
+            this.handlerConstr = handlerClass.getConstructor();
         } catch (NoSuchMethodException e) {
             throw new InvalidThriftClassException("Handler class must have "
-                                                  + "no-arg constructor: " + handlerClassName);
+                    + "no-arg constructor: " + handlerClassName);
         }
         final Constructor<? extends TProcessor> tprocConstr = getTProcConstructor(handlerClass);
         if (tprocConstr == null) {

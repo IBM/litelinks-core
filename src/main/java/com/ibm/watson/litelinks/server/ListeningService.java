@@ -17,6 +17,7 @@ package com.ibm.watson.litelinks.server;
 
 import java.net.SocketAddress;
 
+@FunctionalInterface
 public interface ListeningService {
 
     /**

@@ -47,8 +47,8 @@ public class MultiplexingProxyService extends ThriftService {
     @Override
     protected TProcessor initialize() throws Exception {
         String ZK = System.getProperty(TARGET_ZK_EV);
-		if(ZK==null) ZK = System.getenv(TARGET_ZK_EV);
-		if(ZK==null) throw new Exception(TARGET_ZK_EV+" env var must be provided");
+        if(ZK==null) ZK = System.getenv(TARGET_ZK_EV);
+        if(ZK==null) throw new Exception(TARGET_ZK_EV+" env var must be provided");
 
         String configFile = System.getProperty(SVC_LIST_FILE_ARG);
         if (configFile == null) {
@@ -60,9 +60,9 @@ public class MultiplexingProxyService extends ThriftService {
         final TMultiplexedProcessor processor = new TMultiplexedProcessor();
         for (String line : lines) {
             int ci = line.indexOf('#');
-			if(ci == 0) continue;
-			if(ci > 0) line = line.substring(0, ci);
-			if((line = line.trim()).isEmpty()) continue;
+            if(ci == 0) continue;
+            if(ci > 0) line = line.substring(0, ci);
+            if((line = line.trim()).isEmpty()) continue;
             final String[] toks = line.split("\\s+");
             if (toks.length < 2) {
                 throw new Exception("Invalid entry in config file: " + line);

@@ -110,7 +110,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
             }
 
             this.serviceName = serviceName;
-			this.zkPath = getServicePath(serviceName);
+            this.zkPath = getServicePath(serviceName);
             //TODO TBD should below be done here or in start()
             this.curator = ZookeeperClient.getCurator(connString);
             if (curator == null) {
@@ -120,11 +120,11 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                 @Override
                 protected void logTaskUncheckedException(Throwable t) {
                     logger.error("Exception from ZK Discovery task for service "
-                                 + ZookeeperServiceWatcher.this.serviceName, t);
+                            + ZookeeperServiceWatcher.this.serviceName, t);
                 }
             };
-			this.nodeCache = new NodeCache(curator, zkPath);
-			this.childCache = new PathChildrenCache(curator, zkPath, true, false, cacheExecutor);
+            this.nodeCache = new NodeCache(curator, zkPath);
+            this.childCache = new PathChildrenCache(curator, zkPath, true, false, cacheExecutor);
         }
 
         @Override
@@ -140,7 +140,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                         ChildData cdata = nodeCache.getCurrentData();
                         if (logger.isDebugEnabled()) {
                             logger.debug("service " + serviceName + " node change event: "
-                                         + (cdata == null || cdata.getStat() == null? "null"
+                                    + (cdata == null || cdata.getStat() == null? "null"
                                     : "new zk vers=" + cdata.getStat().getVersion()));
                         }
                         processDataChange(cdata);
@@ -299,7 +299,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
             try {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Zookeeper event: " + event.getType() + " path=" +
-                                 (event.getData() != null? event.getData().getPath() : "null"));
+                            (event.getData() != null? event.getData().getPath() : "null"));
                 }
                 switch (event.getType()) {
                 case INITIALIZED:
@@ -378,7 +378,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                             config = props;
                         } catch (IOException e) {
                             logger.warn("Error parsing config for server "
-                                        + key + " (" + parts[0] + ":" + parts[1] + ")", e);
+                                    + key + " (" + parts[0] + ":" + parts[1] + ")", e);
                         }
                     }
                     if (instanceId == null) {
@@ -390,7 +390,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                             cd.getStat().getCtime(), version, key, instanceId, config);
                 } else {
                     logger.warn("ignoring new child " + key + " with unrecognized data '"
-                                + parts[0] + "' for service " + serviceName);
+                            + parts[0] + "' for service " + serviceName);
                 }
             } else {
                 logger.warn("ignoring new child " + key + " with null data for service " + serviceName);
@@ -411,8 +411,8 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
 
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         ZookeeperServiceRegistry other = (ZookeeperServiceRegistry) obj;
         return Objects.equals(connString, other.connString);
     }

@@ -90,7 +90,7 @@ public class NettyTServer extends TServer implements ListeningService {
      * @see LitelinksSystemPropNames#SERVER_READ_TIMEOUT
      */
     private final long readTimeoutMillis = 1000L *
-                                           Long.getLong(LitelinksSystemPropNames.SERVER_READ_TIMEOUT, 20L);
+            Long.getLong(LitelinksSystemPropNames.SERVER_READ_TIMEOUT, 20L);
 
     /**
      * @see LitelinksSystemPropNames#CANCEL_ON_CLIENT_CLOSE
@@ -117,7 +117,7 @@ public class NettyTServer extends TServer implements ListeningService {
 
     public NettyTServer(TThreadedSelectorServer.Args args) {
         super(args);
-		this.specifiedAddress = args.bindAddr;
+        this.specifiedAddress = args.bindAddr;
         TimeUnit stu = args.getStopTimeoutUnit();
         if (stu != null) {
             shutdownTimeoutNanos = NANOSECONDS.convert(args.getStopTimeoutVal(), stu);
@@ -216,8 +216,8 @@ public class NettyTServer extends TServer implements ListeningService {
                 boolean cancelled = fut.cancel(true); // interrupt if already running
                 if (cancelled) {
                     logger.info("Aborted in-flight service req after client disconnect."
-                                + " Lasted " + msSince(lastReqStartNanos)
-                                + "ms, with " + requestCounter + " prior reqs on channel");
+                            + " Lasted " + msSince(lastReqStartNanos)
+                            + "ms, with " + requestCounter + " prior reqs on channel");
                 }
             }
         }
@@ -266,9 +266,9 @@ public class NettyTServer extends TServer implements ListeningService {
                 // here must be protocol/transport related (e.g. connections closed mid-process)
                 String methodName = ourThread != null? ourThread.getMethodName() : null;
                 String msg = "A client connection terminated before processing"
-                             + (methodName != null? " of method " + methodName : "")
-                             + " had completed, after " + msSince(lastReqStartNanos)
-                             + "ms and " + requestCounter + " prior reqs processed: ";
+                        + (methodName != null? " of method " + methodName : "")
+                        + " had completed, after " + msSince(lastReqStartNanos)
+                        + "ms and " + requestCounter + " prior reqs processed: ";
                 if (!logger.isDebugEnabled()) {
                     logger.warn(msg + te);
                 } else {
@@ -276,7 +276,7 @@ public class NettyTServer extends TServer implements ListeningService {
                 }
             } catch (Throwable t) {
                 logger.error("Request processing failed with unchecked exception"
-                             + " after channel processed " + requestCounter + " reqs", t);
+                        + " after channel processed " + requestCounter + " reqs", t);
                 if (t instanceof Error) {
                     throw t;
                 }
@@ -438,7 +438,7 @@ public class NettyTServer extends TServer implements ListeningService {
                     logger.info("App threads completed cleanly");
                 } else {
                     logger.info(cgroup.size() + " invocations still "
-                                + "in progress after shutdown timeout, force closing");
+                            + "in progress after shutdown timeout, force closing");
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -465,7 +465,7 @@ public class NettyTServer extends TServer implements ListeningService {
         int r = cgroup.size();
         if (r > 0) {
             logger.warn(r + " channels didn't close in "
-                        + MILLISECONDS.convert(wait, NANOSECONDS) + "ms");
+                    + MILLISECONDS.convert(wait, NANOSECONDS) + "ms");
         }
 
         // 6. wait for server channel close to finish

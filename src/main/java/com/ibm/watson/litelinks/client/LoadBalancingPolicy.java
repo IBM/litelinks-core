@@ -36,6 +36,7 @@ package com.ibm.watson.litelinks.client;
  * <b>NOTE:</b> custom load balancers are still "alpha" and the corresponding
  * APIs are subject to change in future versions.
  */
+@FunctionalInterface
 public interface LoadBalancingPolicy {
 
     LoadBalancingPolicy RANDOM = new InclusiveLoadBalancingPolicy() {
@@ -67,6 +68,7 @@ public interface LoadBalancingPolicy {
      * always choose an offered service instance rather than ever rejecting
      * all by returning null
      */
+    @FunctionalInterface
     interface InclusiveLoadBalancingPolicy extends LoadBalancingPolicy {
     }
 }

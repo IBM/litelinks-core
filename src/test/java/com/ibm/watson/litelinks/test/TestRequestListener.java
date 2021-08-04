@@ -58,11 +58,11 @@ public class TestRequestListener extends BaseRequestListener {
     public Object newRequest(String method, Map<String, String> context,
             Map<String, Object> transportParams) throws Exception {
         System.out.println("newreq for method " + method + ", context="
-                           + context + ", tparms=" + transportParams);
-		this.nMethod = method;
-		this.nParam = context != null ? context.get("param") : null;
-		this.nRemoteAddress = transportParams != null ? transportParams.get(TP_REMOTE_ADDRESS) : null;
-		this.nSslSession = transportParams != null ? transportParams.get(TP_SSL_SESSION) : null;
+                + context + ", tparms=" + transportParams);
+        this.nMethod = method;
+        this.nParam = context != null ? context.get("param") : null;
+        this.nRemoteAddress = transportParams != null ? transportParams.get(TP_REMOTE_ADDRESS) : null;
+        this.nSslSession = transportParams != null ? transportParams.get(TP_SSL_SESSION) : null;
         String nrem = thisNewReqExceptionMsg;
         if (nrem != null) {
             throw new Exception(nrem);
@@ -75,11 +75,11 @@ public class TestRequestListener extends BaseRequestListener {
             Map<String, Object> transportParams, Throwable failure,
             Object handle) {
         System.out.println("reqcomplete for method " + method
-                           + ", context=" + context + ", tparms=" + transportParams
-                           + ", failure=" + failure + ", handle=" + handle);
-		this.cMethod = method;
-		this.cParam = context != null ? context.get("param") : null;
-		this.cRemoteAddress = transportParams != null ? transportParams.get(TP_REMOTE_ADDRESS) : null;
+                + ", context=" + context + ", tparms=" + transportParams
+                + ", failure=" + failure + ", handle=" + handle);
+        this.cMethod = method;
+        this.cParam = context != null ? context.get("param") : null;
+        this.cRemoteAddress = transportParams != null ? transportParams.get(TP_REMOTE_ADDRESS) : null;
     }
 
     public static class ThrowingRequestListener extends TestRequestListener {

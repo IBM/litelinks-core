@@ -22,6 +22,7 @@ import org.apache.thrift.TException;
  *
  * @param <T> corresponding method return type
  */
+@FunctionalInterface
 public interface FallbackProvider<T> {
 
     /**

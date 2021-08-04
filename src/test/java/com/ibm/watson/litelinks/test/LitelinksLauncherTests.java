@@ -297,7 +297,7 @@ public class LitelinksLauncherTests {
         try {
             runTest(client, true, null, "-z", ZK, "-n", sname,
                     "-i", instid, "-l", TestRequestListener.ThrowingRequestListener.class.getName());
-            assertTrue("req listener should have intercepted and thrown", false);
+            fail("req listener should have intercepted and thrown");
         } catch (Exception e) {
             assertNotNull(e.getMessage());
             assertTrue(e.getMessage(), e.getMessage().contains("INSTANCE ID IS " + instid));
@@ -370,8 +370,7 @@ public class LitelinksLauncherTests {
                     }
                 }
             }, false, null, jvmArgs, "-n", sname, "-p", Integer.toString(port));
-            assertTrue("Connection should have been closed (due to read timeout on server)",
-                    false); // shouldn't reach here
+            fail("Connection should have been closed (due to read timeout on server)"); // shouldn't reach here
         } catch (TConnectionClosedException tte) {
             // all good
         }
@@ -442,7 +441,7 @@ public class LitelinksLauncherTests {
                     // this should fail - should attempt to use invalid "external" address despite private
                     // one being there
                     runTest(client1, true, envvars, "-z", ZK, "-n", sname, "-p", "" + port);
-                    assertTrue("test against invalid external address expected to to fail", false);
+                    fail("test against invalid external address expected to to fail");
                 } catch (TTransportException tte) {
                     System.out.println("Caught expected exception: " + tte);
                 }
@@ -490,7 +489,7 @@ public class LitelinksLauncherTests {
                     // this should fail - should attempt to use invalid "external" address despite private
                     // one being there
                     runTest(client1, true, envvars, "-z", ZK, "-n", sname, "-p", "" + port);
-                    assertTrue("test against invalid external address expected to to fail", false);
+                    fail("test against invalid external address expected to to fail");
                 } catch (TTransportException tte) {
                     System.out.println("Caught expected exception: " + tte);
                 }
@@ -523,7 +522,7 @@ public class LitelinksLauncherTests {
                 try {
                     // this should fail - should attempt to use different domain id
                     runTest(client1, true, envvars, "-z", ZK, "-n", sname, "-p", "" + port);
-                    assertTrue("test with invalid domain id expected to to fail", false);
+                    fail("test with invalid domain id expected to to fail");
                 } catch (TTransportException tte) {
                     System.out.println("Caught expected exception: " + tte);
                 }
@@ -614,7 +613,7 @@ public class LitelinksLauncherTests {
                     ; i++) {
                 Thread.sleep(500l);
                 if (i == 12) {
-                    assertTrue("Service stop or deregistration timeout", false);
+                    fail("Service stop or deregistration timeout");
                 }
             }
             // verify exit code
@@ -624,6 +623,7 @@ public class LitelinksLauncherTests {
         }
     }
 
+    @FunctionalInterface
     interface Tester<C> {
         void test(C client) throws Exception;
     }

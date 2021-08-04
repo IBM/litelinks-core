@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -107,14 +108,14 @@ public class LegacyHealthCheckerTests {
         svc.awaitRunning();
 
         ExitInfo exitInfo = runHealthCommand("-n", "jphtestservice", "-i", "instanceone", "-z", ZK);
-        assertTrue("The health checker for a running service and instance, with -z option, did not succeed",
-                exitInfo.rc == 0);
+        assertEquals("The health checker for a running service and instance, with -z option, did not succeed", 0,
+                exitInfo.rc);
 
         Map<String, String> env = new TreeMap<>();
         env.put("ZOOKEEPER", ZK);
         exitInfo = runHealthCommand(env, null, "-n", "jphtestservice", "-i", "instanceone");
-        assertTrue("The health checker for a running service and instance, with ZOOKEEPER env var, did not succeed",
-                exitInfo.rc == 0);
+        assertEquals("The health checker for a running service and instance, with ZOOKEEPER env var, did not succeed",
+                0, exitInfo.rc);
 
         expectError("not found for service name", "-n", "jphtestservice", "-i", "unknowninstance", "-z", ZK);
 

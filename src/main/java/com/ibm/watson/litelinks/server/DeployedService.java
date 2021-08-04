@@ -23,11 +23,6 @@ public interface DeployedService {
 
         @Override
         public void preShutdown() {}
-
-        @Override
-        public boolean isLive() {
-            return true;
-        }
     };
 
     void setDeploymentInfo(SettableServiceDeploymentInfo deploymentInfo);

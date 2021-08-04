@@ -18,7 +18,6 @@ package com.ibm.watson.litelinks.test;
 
 import com.ibm.watson.litelinks.test.thrift.DummyService;
 import com.ibm.watson.litelinks.test.thrift.DummyStruct;
-import com.ibm.watson.litelinks.test.thrift.TestException;
 import org.apache.thrift.TException;
 
 import java.io.Closeable;

@@ -25,7 +25,6 @@ import com.ibm.watson.litelinks.server.MultiplexingProxyService;
 import com.ibm.watson.litelinks.test.thrift.DummyService;
 import com.ibm.watson.litelinks.test.thrift.DummyService2;
 import com.ibm.watson.litelinks.test.thrift.DummyStruct;
-import com.ibm.watson.litelinks.test.thrift.TestException;
 import org.apache.curator.test.TestingServer;
 import org.apache.thrift.TException;
 import org.junit.AfterClass;
@@ -119,7 +118,7 @@ public class MultiplexingProxyTests {
                 try {
                     // this should fail
                     clientAprox.method_one(null, null, false);
-                    assertTrue("Stopped back-end service still responding somehow", false);
+                    fail("Stopped back-end service still responding somehow");
                 } catch (Exception e) {
                     // won't actually be any nested SUE, but the message should come through
                     assertTrue(e.getMessage() != null &&

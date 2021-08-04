@@ -132,7 +132,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
 //		this.activeLB = lbp.getLoadBalancer();
 //		this.problemLB = lbp.getLoadBalancer();
         this.clientManager = clientManager;
-		this.serviceName = name;
+        this.serviceName = name;
     }
 
     /**
@@ -166,7 +166,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
             }
 //			throw e;
             logger.error("Client config error for discovered instance "
-                         + "(serviceName=" + serviceName + "): " + forId, e);
+                    + "(serviceName=" + serviceName + "): " + forId, e);
             return null;
         }
     }
@@ -257,7 +257,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
         for (Server s : servers) {
             toRemove.remove(s.key);
         }
-        serversAddedAndOrRemoved(servers, toRemove.toArray(new String[toRemove.size()]), source);
+        serversAddedAndOrRemoved(servers, toRemove.toArray(new String[0]), source);
     }
 
     private void removeFromLists(ServiceInstance<C> toRemove, boolean prevAdds) {

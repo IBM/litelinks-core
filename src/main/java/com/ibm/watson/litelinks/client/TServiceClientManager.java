@@ -88,7 +88,7 @@ public class TServiceClientManager<C extends TServiceClient>
     public static final long DISCOVERY_INIT_TIMEOUT = 20000l; //20sec TBD
 
     public static final TProtocolFactory DEFAULT_TPROTOFAC = new TCompactProtocol.Factory();
-    // 		== com.ibm.litelinks.server.DefaultThriftServer.DEFAULT_TPROTOFAC
+    //    == com.ibm.litelinks.server.DefaultThriftServer.DEFAULT_TPROTOFAC
 
     public static final LoadBalancingPolicy DEFAULT_LB_POLICY = LoadBalancingPolicy.BALANCED;
 
@@ -217,22 +217,22 @@ public class TServiceClientManager<C extends TServiceClient>
         ServiceInstanceCache<C> svcCache = null;
         ServiceWatcher svcWatcher = null;
         try {
-    		this.serviceKey = svcKey;
+            this.serviceKey = svcKey;
             this.serviceName = serviceName;
             this.serviceClassName = serviceClassName;
-    		this.serviceIface = serviceClassName != null && !ThriftConnProp.MULTIPLEX_CLASS.equals(serviceClassName)
+            this.serviceIface = serviceClassName != null && !ThriftConnProp.MULTIPLEX_CLASS.equals(serviceClassName)
                     ? getIfaceFromSvcClass(Class.forName(serviceClassName)) : null;
-    		this.ServiceUnavailableException = LitelinksExceptions.eraseStackTrace(
+            this.ServiceUnavailableException = LitelinksExceptions.eraseStackTrace(
                     new ServiceUnavailableException(serviceName));
 
-    		this.clientFactory = factory;
-    		this.serviceCache = svcCache = new ServiceInstanceCache<C>(serviceName, /*DEFAULT_LB_POLICY,*/ this);
+            this.clientFactory = factory;
+            this.serviceCache = svcCache = new ServiceInstanceCache<C>(serviceName, /*DEFAULT_LB_POLICY,*/ this);
 
             sendMDC = getThreadContextProps()[1];
 
             logger.info("Creating client for service " + serviceName + "; send log_mdc=" + sendMDC);
 
-    		this.serviceWatcher = svcWatcher = svcReg.newServiceWatcher(serviceName);
+            this.serviceWatcher = svcWatcher = svcReg.newServiceWatcher(serviceName);
             svcWatcher.start(serviceCache, DISCOVERY_INIT_TIMEOUT);
             svcCache = null;
             svcWatcher = null;
@@ -448,8 +448,7 @@ public class TServiceClientManager<C extends TServiceClient>
             if (serviceIface != null) {
                 try {
                     otherIface = getIfaceFromSvcClass(Class.forName(sc));
-                } catch (ClassNotFoundException cnfe) {
-                }
+                } catch (ClassNotFoundException cnfe) {}
             }
             if (otherIface == null || !serviceIface.isAssignableFrom(otherIface)) {
                 throw new Exception("service class mismatch: expecting " + serviceClassName
@@ -518,7 +517,7 @@ public class TServiceClientManager<C extends TServiceClient>
 
     @Override
     public C createClient(ServiceInstanceConfig<C> config, long timeoutMillis) throws TTransportException {
-	  if (!(config instanceof TServiceClientManager.ThriftInstanceConfig)) {
+        if (!(config instanceof TServiceClientManager.ThriftInstanceConfig)) {
             throw new IllegalStateException("Invalid type of service config: "
                                             + config != null? config.getClass().toString() : "null");
         }
@@ -529,8 +528,8 @@ public class TServiceClientManager<C extends TServiceClient>
     public boolean isTransportException(Throwable t) {
         if (t instanceof TTransportException
             || t instanceof TProtocolException
-		        || t instanceof SocketException) return true;
-		if(!(t instanceof TApplicationException)) return false;
+                || t instanceof SocketException) return true;
+        if(!(t instanceof TApplicationException)) return false;
         int type = ((TApplicationException) t).getType();
         return type == TApplicationException.PROTOCOL_ERROR
                || type == TApplicationException.INVALID_PROTOCOL
@@ -654,20 +653,20 @@ public class TServiceClientManager<C extends TServiceClient>
                 Map<String, String> metadata, Map<String, MethodInfo> methodInfos) throws Exception {
             super(version, registrationTime, metadata, methodInfos);
             // default is framed=false
-			this.framed = "true".equals(connConfig.get(ThriftConnProp.TR_FRAMED));
-			this.protoFactory = getServiceProtocolFactory(connConfig);
+            this.framed = "true".equals(connConfig.get(ThriftConnProp.TR_FRAMED));
+            this.protoFactory = getServiceProtocolFactory(connConfig);
 
-			this.extraInfoSupported = "true".equals(connConfig.get(ThriftConnProp.TR_EXTRA_INFO));
+            this.extraInfoSupported = "true".equals(connConfig.get(ThriftConnProp.TR_EXTRA_INFO));
 
             final boolean ssl = "true".equals(connConfig.get(ThriftConnProp.TR_SSL));
             if (ssl) {
                 String protocol = (String) connConfig.get(ThriftConnProp.TR_SSL_PROTOCOL);
-				this.sslProtocol = protocol != null ? protocol : SSLParams.getDefault().protocol;
+                this.sslProtocol = protocol != null ? protocol : SSLParams.getDefault().protocol;
                 this.sslContext = SSLHelper.getSslContext(sslProtocol, false, false);
-			}
-			else {
-				this.sslProtocol = null;
-				this.sslContext = null;
+            }
+            else {
+                this.sslProtocol = null;
+                this.sslContext = null;
             }
 
             if (usePrivateEndpoints()) {
@@ -726,22 +725,22 @@ public class TServiceClientManager<C extends TServiceClient>
 
         @Override
         public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
             @SuppressWarnings("unchecked")
             ThriftInstanceConfig other = (ThriftInstanceConfig) obj;
-			if (framed != other.framed)	return false;
-			if (extraInfoSupported != other.extraInfoSupported) return false;
-			if (!Objects.equals(host, other.host)) return false;
-			if (port != other.port)	return false;
-			if ((sslContext == null) != (other.sslContext == null)) return false;
-			if (!Objects.equals(sslProtocol, other.sslProtocol)) return false;
+            if (framed != other.framed)	return false;
+            if (extraInfoSupported != other.extraInfoSupported) return false;
+            if (!Objects.equals(host, other.host)) return false;
+            if (port != other.port)	return false;
+            if ((sslContext == null) != (other.sslContext == null)) return false;
+            if (!Objects.equals(sslProtocol, other.sslProtocol)) return false;
             Class<?> pfc = protoFactory != null ? protoFactory.getClass() : null;
             Class<?> opfc = protoFactory != null ? protoFactory.getClass() : null;
-			if (!Objects.equals(pfc, opfc)) return false;
-			if (Objects.equals(getVersion(), other.getVersion())) return false;
-			return true;
+            if (!Objects.equals(pfc, opfc)) return false;
+            if (Objects.equals(getVersion(), other.getVersion())) return false;
+            return true;
         }
     }
 
@@ -783,9 +782,9 @@ public class TServiceClientManager<C extends TServiceClient>
         }
         @Override
         public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
             final ServiceKey other = (ServiceKey) obj;
             return Objects.equals(name, other.name) &&
                    Objects.equals(mplexerName, other.mplexerName) &&

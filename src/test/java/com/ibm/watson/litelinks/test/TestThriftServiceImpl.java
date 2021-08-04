@@ -20,7 +20,6 @@ import com.ibm.watson.litelinks.server.ThriftService;
 import com.ibm.watson.litelinks.test.thrift.DummyEnum;
 import com.ibm.watson.litelinks.test.thrift.DummyService;
 import com.ibm.watson.litelinks.test.thrift.DummyStruct;
-import com.ibm.watson.litelinks.test.thrift.TestException;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 

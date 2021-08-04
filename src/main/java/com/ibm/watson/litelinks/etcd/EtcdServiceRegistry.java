@@ -85,10 +85,10 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
                 throw new IllegalArgumentException("service name must not contain '/'");
             }
             this.serviceName = serviceName;
-	        this.prefix = EtcdDiscovery.servicePrefix(litelinksPrefix, serviceName);
-	        this.prefixLen = prefix.size();
-	        this.client = etcdConfig.getClient();
-	        this.rangeCache = new RangeCache(client, prefix);
+            this.prefix = EtcdDiscovery.servicePrefix(litelinksPrefix, serviceName);
+            this.prefixLen = prefix.size();
+            this.client = etcdConfig.getClient();
+            this.rangeCache = new RangeCache(client, prefix);
         }
 
         @Override
@@ -130,7 +130,7 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
                 ByteString key = keyValue != null? keyValue.getKey() : null;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Etcd event: " + type
-                                 + " key=" + (key != null? key.toStringUtf8() : "null"));
+                            + " key=" + (key != null? key.toStringUtf8() : "null"));
                 }
                 if (type == EventType.INITIALIZED) {
                     if (!preInit.isEmpty()) {
@@ -142,7 +142,7 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
                 }
                 if (key == null || key.size() <= prefixLen) {
                     logger.warn("Event " + type + " for unexpected key: "
-                                + (key != null? key.toStringUtf8() : "null"));
+                            + (key != null? key.toStringUtf8() : "null"));
                     return;
                 }
                 String instance = key.substring(prefixLen).toStringUtf8();
@@ -186,12 +186,12 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
                     return sv;
                 } catch (Exception e) {
                     logger.error("ignoring new registration " + key + " with data '"
-                                 + data.toStringUtf8() + "' for service "
-                                 + serviceName + " due to error", e);
+                            + data.toStringUtf8() + "' for service "
+                            + serviceName + " due to error", e);
                 }
             } else {
                 logger.error("ignoring new registration "
-                             + key + " with null or empty data for service " + serviceName);
+                        + key + " with null or empty data for service " + serviceName);
             }
             return null;
         }
@@ -224,10 +224,10 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
 
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         EtcdClusterConfig other = ((EtcdServiceRegistry) obj).etcdConfig;
         return Objects.equals(etcdConfig.getEndpoints(), other.getEndpoints())
-               && Objects.equals(etcdConfig.getRootPrefix(), other.getRootPrefix());
+                && Objects.equals(etcdConfig.getRootPrefix(), other.getRootPrefix());
     }
 }

@@ -99,7 +99,7 @@ public class WTTransportException extends TTransportException {
 
     public WTTransportException(int type, String message, Throwable cause) {
         super(type, message, cause);
-		this.beforeWriting = false;
+        this.beforeWriting = false;
     }
 
     public boolean isBeforeWriting() {

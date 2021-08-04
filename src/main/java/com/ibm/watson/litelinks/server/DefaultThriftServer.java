@@ -100,7 +100,7 @@ public class DefaultThriftServer extends AbstractService
     private final RequestListener[] reqListeners;
 
     private final ScheduledExecutorService serviceEventThreads;
-//	private Thread serverThread;
+//  private Thread serverThread;
 
     private volatile Thread currentAppThread; // just for timeout logging
 
@@ -138,10 +138,10 @@ public class DefaultThriftServer extends AbstractService
             TProtocolFactory tpf, SSLMode sslMode, int startupTimeoutSecs,
             RequestListener[] reqListeners) {
         this.tsClass = tsClass;
-		this.specifiedAddr = bindAddress;
+        this.specifiedAddr = bindAddress;
         this.tpf = tpf != null? tpf : DEFAULT_TPROTOFAC;
         this.sslMode = sslMode == null? SSLMode.NONE : sslMode;
-		this.serviceEventThreads = LitelinksService.getServiceEventThreads();
+        this.serviceEventThreads = LitelinksService.getServiceEventThreads();
         this.startupTimeoutSecs = startupTimeoutSecs;
         this.reqListeners = reqListeners;
     }
@@ -199,11 +199,11 @@ public class DefaultThriftServer extends AbstractService
 
     @Override
     public Map<String, String> getConfig() throws Exception {
-		SSLMode sm = this.sslMode;
+        SSLMode sm = this.sslMode;
         TProcessor tp = this.tp;
         Class<?> tpc = tp != null? tp.getClass() : null;
-        String scName = TMultiplexedProcessor.class.equals(tpc)? MULTIPLEX_CLASS
-                : tpc != null && tpc.getDeclaringClass() != null? tpc.getDeclaringClass().getName() : null;
+        String scName = TMultiplexedProcessor.class.equals(tpc) ? MULTIPLEX_CLASS
+                : tpc != null && tpc.getDeclaringClass() != null ? tpc.getDeclaringClass().getName() : null;
         ImmutableMap.Builder<String, String> bld = new ImmutableMap.Builder<String, String>()
                 .put(TR_PROTO_FACTORY, tpf.getClass().getName())
                 .put(TR_FRAMED, Boolean.toString(framed))
@@ -237,7 +237,7 @@ public class DefaultThriftServer extends AbstractService
         if(tp == null) return null;
         Class<?> sc = tp.getClass().getDeclaringClass();
         if(sc == null) return null;
-        Class<?> iface = AdapterThriftService.getIfaceFromSvcClass(sc);
+        Class<?> iface = getIfaceFromSvcClass(sc);
         if(iface == null) return null;
         Map<String, MethodInfo> providedInfos = ts != null? ts.provideMethodInfo() : null;
         Class<?> implClass = null;
@@ -472,7 +472,7 @@ public class DefaultThriftServer extends AbstractService
             args.sslContext = SSLHelper.getSslContext(null, true, sslMode == SSLMode.CLIENT_AUTH);
         }
 
-//		selectorServer = new TThreadedSelectorServer(args);
+//      selectorServer = new TThreadedSelectorServer(args);
         selectorServer = new NettyTServer(args);
 
         // register listener with thrift server to be notified when it is ready
@@ -644,8 +644,8 @@ public class DefaultThriftServer extends AbstractService
     public boolean isLive() {
         final ThriftService ts = this.ts;
         return ts == null || ts.isLive();
-//	    return ts != null ? ts.isLive() : selectorServer != null
-//	            && selectorServer.isServing();
+//     return ts != null ? ts.isLive() : selectorServer != null
+//            && selectorServer.isServing();
     }
 
     @Override
@@ -660,7 +660,7 @@ public class DefaultThriftServer extends AbstractService
         if (ts == null) {
             return;
         }
-//		assert ts.state() >= RUNNING
+//      assert ts.state() >= RUNNING
         logger.info("stopping service implementation...");
         // even though this should be 'async' we defensively
         // assume the service isn't implemented this way
