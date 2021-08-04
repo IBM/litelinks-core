@@ -65,7 +65,7 @@ import static java.lang.System.nanoTime;
 /**
  * Performs the RPC method invocations
  */
-class ClientInvocationHandler<C extends TServiceClient> implements InvocationHandler {
+final class ClientInvocationHandler<C extends TServiceClient> implements InvocationHandler {
     private static final Logger logger = LoggerFactory.getLogger(ClientInvocationHandler.class);
 
     public static final int MAX_RETRIES = 4;
@@ -97,9 +97,9 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
 
     private volatile boolean closed;
 
-    private final ThriftClientBuilder tcb;
+    private final ThriftClientBuilder<?> tcb;
 
-    ClientInvocationHandler(ThriftClientBuilder tcb, Map<String, String> defaultContext,
+    ClientInvocationHandler(ThriftClientBuilder<?> tcb, Map<String, String> defaultContext,
         ServiceRegistryClient srClient, TServiceClientManager<C> clientPool,
         Class<?>[] ifaces, ClassLoader loader) {
         this.tcb = tcb;
@@ -315,7 +315,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
     }
 
     // returns map to restore threadcontext to post-invocation
-    private final Map<String, String> setupThreadContext(Map<String, String> defaultContext,
+    private static Map<String, String> setupThreadContext(Map<String, String> defaultContext,
             Map<String, String> extraContext) {
         if (defaultContext == null && extraContext == null) {
             return NO_CTX_CHANGE;
@@ -325,7 +325,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
         return tcBefore;
     }
 
-    private final Map<String, String> getThreadContextForAsync(Map<String, String> defaultContext,
+    private static Map<String, String> getThreadContextForAsync(Map<String, String> defaultContext,
             Map<String, String> extraContext) {
         Map<String, String> currContext = ThreadContext.getCurrentContext();
         if (defaultContext == null && extraContext == null) {
@@ -335,7 +335,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
         }
     }
 
-    private final Map<String, String> mergedThreadContext(Map<String, String> currContext,
+    private static Map<String, String> mergedThreadContext(Map<String, String> currContext,
             Map<String, String> defaultContext, Map<String, String> extraContext) {
         Map<String, String> newTc = null;
         if (sz(currContext) == 0) {
@@ -459,7 +459,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
     }
 
     //TODO move to ServiceClientManager interface *maybe*
-    private boolean isRetryable(Exception e) {
+    private static boolean isRetryable(Exception e) {
         if (e instanceof WTTransportException
             && ((WTTransportException) e).isBeforeWriting()) {
             return true;
@@ -473,7 +473,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
                || type == TApplicationException.UNSUPPORTED_CLIENT_TYPE;
     }
 
-    private long remainingTimeNanos(long deadlineNanos) throws TimeoutException {
+    private static long remainingTimeNanos(long deadlineNanos) throws TimeoutException {
         if (deadlineNanos == 0L) {
             return 0L;
         }
@@ -484,7 +484,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
         return remain;
     }
 
-    private Object invoke(TServiceClient client, Method method, Object[] args, long timeout) throws TException {
+    private static Object invoke(TServiceClient client, Method method, Object[] args, long timeout) throws TException {
         try {
             TTransport tt = client.getOutputProtocol().getTransport();
             if (tt instanceof NettyTTransport) {
@@ -518,7 +518,7 @@ class ClientInvocationHandler<C extends TServiceClient> implements InvocationHan
             return mc.fallback.getFallback(new FailureInformation() {
                 @Override public Object[] getOriginalArgs() {
                     return args;
-                };
+                }
                 @Override public Throwable getException() {
                     return fee;
                 }

@@ -105,7 +105,7 @@ public class NettyTTransport extends TTransport {
         }
         this.addr = addr;
         this.connectTimeout = connectTimeout;
-		this.bs = new Bootstrap()
+        this.bs = new Bootstrap()
                 .group(NettyCommon.getWorkerGroup()).channel(NettyCommon.getChannelClass())
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
@@ -130,8 +130,8 @@ public class NettyTTransport extends TTransport {
                 })
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.ALLOCATOR, alloc);
-		this.reader = null;
-		this.readerScheduled = true; // prevents any schedule attempts
+        this.reader = null;
+        this.readerScheduled = true; // prevents any schedule attempts
     }
 
     public NettyTTransport(InetSocketAddress addr, long connectTimeout) {
@@ -150,7 +150,7 @@ public class NettyTTransport extends TTransport {
         this.connectTimeout = 0; // already open in this case
         this.bs = null;
         this.reader = reader;
-		this.readerScheduled = sslContext == null;
+        this.readerScheduled = sslContext == null;
 
         SSLEngine sslEngine = sslContext == null? null
                 : sslContext.newEngine(chan.alloc());
@@ -425,7 +425,7 @@ public class NettyTTransport extends TTransport {
                 failure = cause;
             } else {
                 logger.warn("DEBUG: Second eC thrown for " + NettyTTransport.this
-                            + " (first was: " + failure + ")", cause);
+                        + " (first was: " + failure + ")", cause);
             }
 //			ctx.close(); // TBD
         }
@@ -454,7 +454,7 @@ public class NettyTTransport extends TTransport {
         int wqlen = wbbq.length, rbr = readBufsReady.get();
         // check if we need to overflow into a new buffer array
         if (rbr >= wqlen &&
-            (wbbq == rbbq || writeIdx == 0 && wbbq[0] != null)) {
+                (wbbq == rbbq || writeIdx == 0 && wbbq[0] != null)) {
             wbbq = new ByteBuf[wqlen = wbbq.length + wbbq.length / 2];
             if (overflow == null) {
                 overflow = new ArrayDeque<>(4);
@@ -493,7 +493,7 @@ public class NettyTTransport extends TTransport {
             }
             int rb = rbb.readableBytes(), toread = Math.min(rb, len - read);
             rbb.readBytes(buf, off + read, toread);
-			if(trace) logger.trace("read: " + hexString(buf, off + read, toread));
+            if(trace) logger.trace("read: " + hexString(buf, off + read, toread));
             read += toread;
             if (toread >= rb && readBufferConsumed(false)) {
                 break;
@@ -528,7 +528,7 @@ public class NettyTTransport extends TTransport {
                     bb = rbb.readRetainedSlice(toread);
                     waitNeeded = false;
                 }
-	            if(trace) logger.trace("read: " + ByteBufUtil.hexDump(bb));
+                if(trace) logger.trace("read: " + ByteBufUtil.hexDump(bb));
                 if ((len -= toread) <= 0) {
                     ByteBuf result = cbb != null? cbb.addComponent(true, bb) : bb;
                     bb = null;
@@ -543,8 +543,8 @@ public class NettyTTransport extends TTransport {
             }
         } finally {
             // ensure we don't leak the cumulation in error cases
-	        if (bb != null) bb.release();
-	        if (cbb != null) cbb.release();
+            if (bb != null) bb.release();
+            if (cbb != null) cbb.release();
         }
     }
 
@@ -677,7 +677,7 @@ public class NettyTTransport extends TTransport {
         }
         if (rbb == null && (rbb = rbbq[readIdx]) == null) {
             moveToNextOverflow();
-        };
+        }
         return rbb.readableBytes();
     }
 

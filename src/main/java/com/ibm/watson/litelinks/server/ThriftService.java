@@ -51,7 +51,7 @@ public abstract class ThriftService extends AbstractService {
         return tproc;
     }
     final void setDeploymentInfo(ServiceDeploymentInfo info) {
-		this.deploymentInfo = info;
+        this.deploymentInfo = info;
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class ThriftService extends AbstractService {
         final Constructor<? extends TProcessor> tprocConstr = AdapterThriftService.getTProcConstructor(getClass());
         if (tprocConstr == null) {
             throw new InvalidThriftClassException("ThriftService " + getClass()
-                + " must implement the initialize() method or implement a thrift service Iface");
+                    + " must implement the initialize() method or implement a thrift service Iface");
         }
         return tprocConstr.newInstance(this);
     }
@@ -164,7 +164,7 @@ public abstract class ThriftService extends AbstractService {
      * by the service deployer
      */
     public String defaultServiceName() {
-//		return null;
+//      return null;
         return getDefaultServiceName();
     }
 
@@ -175,7 +175,7 @@ public abstract class ThriftService extends AbstractService {
      * @return the version of this service, or null if not specified
      */
     public String serviceVersion() {
-//		return null;
+//      return null;
         return getServiceVersion();
     }
 
@@ -229,7 +229,7 @@ public abstract class ThriftService extends AbstractService {
         ServiceDeploymentInfo sdi = deploymentInfo;
         if (sdi == null) {
             throw new IllegalStateException(
-                "Deployment info not available prior to service initialization");
+                    "Deployment info not available prior to service initialization");
         }
         return sdi;
     }

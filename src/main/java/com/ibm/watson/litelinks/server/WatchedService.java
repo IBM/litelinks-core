@@ -364,17 +364,17 @@ public abstract class WatchedService extends AbstractService implements Listenin
         }
     }
 
-    protected static final String determinePrivateEndpoint() {
+    protected static String determinePrivateEndpoint() {
         String pe = System.getProperty(LitelinksSystemPropNames.PRIVATE_ENDPOINT);
         return pe != null? pe : System.getenv(LitelinksEnvVariableNames.PRIVATE_ENDPOINT);
     }
 
-    protected static final String determinePrivateDomainId() {
+    protected static String determinePrivateDomainId() {
         String pd = System.getProperty(LitelinksSystemPropNames.PRIVATE_DOMAIN_ID);
         return pd != null? pd : System.getenv(LitelinksEnvVariableNames.PRIVATE_DOMAIN_ID);
     }
 
-    protected static final String determineHostString() throws UnknownHostException {
+    protected static String determineHostString() throws UnknownHostException {
         String hostname = System.getenv(LitelinksEnvVariableNames.ADDRESS);
         if (hostname == null) {
             return findHost();

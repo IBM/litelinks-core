@@ -47,7 +47,6 @@ import com.ibm.watson.litelinks.server.InstanceFailures;
 import com.ibm.watson.litelinks.server.LitelinksService;
 import com.ibm.watson.litelinks.server.LitelinksService.ServiceDeploymentConfig;
 import com.ibm.watson.litelinks.server.ReleaseAfterResponse;
-import com.ibm.watson.litelinks.server.RequestListener;
 import com.ibm.watson.litelinks.test.thrift.DummyEnum;
 import com.ibm.watson.litelinks.test.thrift.DummyService;
 import com.ibm.watson.litelinks.test.thrift.DummyService2;
@@ -190,7 +189,7 @@ public class LitelinksTests {
                 Service svc = LitelinksService.createService(SettableThriftServiceImpl.class, ZK, "invalidmitest")
                         .startAsync();
                 svc.awaitRunning();
-                assertTrue("invalid methinfo should throw", false);
+                fail("invalid methinfo should throw");
                 stopAll(svc);
             } catch (IllegalStateException e) {
                 System.out.println("exception: " + e.getCause());
@@ -332,7 +331,7 @@ public class LitelinksTests {
                         .setServiceClass(TestThriftServiceImpl.class).setZkConnString(ZK)
                         .setServiceVersion(invalid)).startAsync()).awaitRunning(4, TimeUnit.SECONDS);
                 stopAll(svc);
-                assertTrue("invalid version string should have failed", false);
+                fail("invalid version string should have failed");
             } catch (IllegalStateException iae) {
                 assertTrue(iae.getCause().getMessage().contains("can't contain line break"));
             }
@@ -341,7 +340,7 @@ public class LitelinksTests {
                         .setServiceClass(TestThriftServiceImpl.class).setZkConnString(ZK)
                         .setInstanceId(invalid)).startAsync()).awaitRunning(4, TimeUnit.SECONDS);
                 stopAll(svc);
-                assertTrue("invalid version string should have failed", false);
+                fail("invalid version string should have failed");
             } catch (IllegalStateException iae) {
                 assertTrue(iae.getCause().getMessage().contains("can't contain line break"));
             }
@@ -395,7 +394,7 @@ public class LitelinksTests {
                     .withZookeeper(ZK).withServiceName("metadatatest").buildOnceAvailable(3000L);
             // abstract map equality
             assertEquals(myMetadata, ((LitelinksServiceClient) client).getServiceInstanceInfo().get(0).getMetadata());
-            assertFalse(myMetadata == ((LitelinksServiceClient) client).getServiceInstanceInfo().get(0).getMetadata());
+            assertNotSame(myMetadata, ((LitelinksServiceClient) client).getServiceInstanceInfo().get(0).getMetadata());
             svc.stopAsync().awaitTerminated();
         } finally {
             stopAll(svc);
@@ -457,7 +456,7 @@ public class LitelinksTests {
                 SDITestingThriftServiceImpl.provideVersion = true;
                 // don't provide service name or version externally
                 svc = LitelinksService.createService(new ServiceDeploymentConfig()
-                        .setServiceClass(SDITestingThriftServiceImpl.class).setZkConnString(ZK))
+                                .setServiceClass(SDITestingThriftServiceImpl.class).setZkConnString(ZK))
                         .startAsync();
                 svc.awaitRunning();
             }
@@ -501,9 +500,9 @@ public class LitelinksTests {
             synchronized (TestRequestListener.class) {
                 TestRequestListener.initExceptionMsg = null;
                 svc = LitelinksService.createService(new ServiceDeploymentConfig(SimpleThriftServiceImpl.class)
-                        .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
-                        .setReqListenerClasses(Collections.
-                                singletonList(TestRequestListener.class)))
+                                .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
+                                .setReqListenerClasses(Collections.
+                                        singletonList(TestRequestListener.class)))
                         .startAsync();
 
                 client = ThriftClientBuilder.newBuilder(DummyService.Client.class)
@@ -531,8 +530,8 @@ public class LitelinksTests {
                 impl.thisNewReqExceptionMsg = exMsg;
                 try {
                     basic_test(client);
-                    assertTrue("Client invocation should have thrown exception"
-                               + " from req listener", false);
+                    fail("Client invocation should have thrown exception"
+                            + " from req listener");
                 } catch (Exception e) {
                     if (!(e instanceof TApplicationException)) {
                         System.err.println("Unexpected exception type: " + e.getClass().getName());
@@ -555,12 +554,12 @@ public class LitelinksTests {
             synchronized (TestRequestListener.class) {
                 TestRequestListener.initExceptionMsg = exMsg;
                 svc = LitelinksService.createService(new ServiceDeploymentConfig(SimpleThriftServiceImpl.class)
-                        .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
-                        .setReqListenerClasses(Collections.singletonList(TestRequestListener.class)))
+                                .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
+                                .setReqListenerClasses(Collections.singletonList(TestRequestListener.class)))
                         .startAsync();
                 try {
                     svc.awaitRunning();
-                    assertTrue("service init didn't fail", false);
+                    fail("service init didn't fail");
                 } catch (IllegalStateException ise) {
                     assertNotNull(ise.getCause());
                     assertNotNull(ise.getCause().getMessage());
@@ -584,9 +583,9 @@ public class LitelinksTests {
             synchronized (TestRequestListener.class) {
                 TestRequestListener.initExceptionMsg = null;
                 svc = LitelinksService.createService(new ServiceDeploymentConfig(SimpleThriftServiceImpl.class)
-                        .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
-                        .setSslMode(SSLMode.CLIENT_AUTH)
-                        .setReqListenerClasses(Collections.singletonList(TestRequestListener.class)))
+                                .setZkConnString(ZK).setServiceName(name).setInstanceId(instId).setStartTimeoutSecs(5)
+                                .setSslMode(SSLMode.CLIENT_AUTH)
+                                .setReqListenerClasses(Collections.singletonList(TestRequestListener.class)))
                         .startAsync();
 
                 client = ThriftClientBuilder.newBuilder(DummyService.Client.class)
@@ -619,12 +618,12 @@ public class LitelinksTests {
                 long t = System.currentTimeMillis();
                 try {
                     svc.awaitRunning();
-                    assertTrue("did not timeout", false);
+                    fail("did not timeout");
                 } catch (IllegalStateException ise) {
                     long took = System.currentTimeMillis() - t;
                     assertTrue("non-timeout failure",
                             ise.getCause() != null && ise.getCause() instanceof TimeoutException);
-                    assertTrue("hung thread stacktrace not included", ise.getCause().getCause() != null);
+                    assertNotNull("hung thread stacktrace not included", ise.getCause().getCause());
                     assertTrue("5sec timeout took " + took, took > 4500 && took < 5500);
                 }
             }
@@ -921,7 +920,7 @@ public class LitelinksTests {
                 try {
                     System.out.println("Testing testConnection method 3");
                     testConn(client);
-                    assertTrue("testconn should fail", false);
+                    fail("testconn should fail");
                 } catch (WTTransportException e) {
                 }
                 startReal(port, count1);
@@ -932,7 +931,7 @@ public class LitelinksTests {
                 try {
                     System.out.println("Testing testConnection method 5");
                     testConn(client);
-                    assertTrue("testconn should fail", false);
+                    fail("testconn should fail");
                 } catch (ServiceUnavailableException e) {
                 }
             } finally {
@@ -954,7 +953,7 @@ public class LitelinksTests {
         }
         try {
             basic_test(client);
-            assertTrue("test against non-existent server should fail", false);
+            fail("test against non-existent server should fail");
         } catch (TException te) {
             te.printStackTrace();
             assertTrue(te.getCause() instanceof ServiceUnavailableException);
@@ -1024,7 +1023,7 @@ public class LitelinksTests {
                     System.out.println("Caught exception chain: " + Throwables.getCausalChain(ee));
                     Throwable cause = ee.getCause();
                     assertTrue(cause instanceof InterruptedException
-                               || cause.getCause() instanceof InterruptedException);
+                            || cause.getCause() instanceof InterruptedException);
                 }
                 Thread.sleep(200L);
                 // ensure method was not retried
@@ -1123,7 +1122,7 @@ public class LitelinksTests {
                 long before = System.currentTimeMillis();
                 try {
                     client.method_one("", null, false);
-                    assertTrue("Method should have timed out", false);
+                    fail("Method should have timed out");
                 } catch (TTransportException e) {
                 }
                 assertTrue(latch.await(4, TimeUnit.SECONDS));
@@ -1304,8 +1303,8 @@ public class LitelinksTests {
             boolean ok = ((LitelinksServiceClient) client).awaitAvailable(20000l);
             if (!ok) {
                 System.out.println("avail= " + ((LitelinksServiceClient) client).isAvailable()
-                                   + " children in zk: " + ZookeeperClient.getCurator(tempZk.getConnectString())
-                                           .getChildren().forPath(getServicePath(svcName)));
+                        + " children in zk: " + ZookeeperClient.getCurator(tempZk.getConnectString())
+                        .getChildren().forPath(getServicePath(svcName)));
             }
             assertTrue(ok);
             basic_test(client);
@@ -1420,7 +1419,7 @@ public class LitelinksTests {
     public void static_registry_test() throws Exception {
         int port = 1082;
 
-        assertTrue("Don't run the unit tests with ZOOKEEPER env var set", System.getenv("ZOOKEEPER") == null);
+        assertNull("Don't run the unit tests with ZOOKEEPER env var set", System.getenv("ZOOKEEPER"));
         Service staticsvc = LitelinksService.createService(TestThriftServiceImpl.class,
                 null, "name_isnt_used", port, null, null);
         try {
@@ -1445,11 +1444,11 @@ public class LitelinksTests {
             ThriftClientBuilder.<DummyService2.Iface>newBuilder(DummyService2.Client.class)
                     .withZookeeper(ZK).withServiceName(DummyService.class.getName())
                     .buildOnceAvailable(5000l).just_one_method("testdata");
-            assertTrue("client creation should have failed", false);
+            fail("client creation should have failed");
         } catch (RuntimeException e) {
             e.printStackTrace();
             assertTrue(e.getCause() != null && e.getCause().getMessage() != null
-                       && e.getCause().getMessage().startsWith("service class mismatch"));
+                    && e.getCause().getMessage().startsWith("service class mismatch"));
         }
         // try to start server instance with same svc name but different svc class
         Service svc = LitelinksService.createService(TestThriftService2Impl.class,
@@ -1458,7 +1457,7 @@ public class LitelinksTests {
         try {
             svc.awaitRunning();
             svc.stopAsync();
-            assertTrue("service start should have failed", false);
+            fail("service start should have failed");
         } catch (IllegalStateException ise) {
             assertTrue(ise.getCause() instanceof ConfiguredService.ConfigMismatchException);
         }
@@ -1484,7 +1483,7 @@ public class LitelinksTests {
 
             try {
                 svc2.awaitRunning();
-                assertFalse("Adding superclass svc instnace should fail", true);
+                fail("Adding superclass svc instnace should fail");
             } catch (IllegalStateException ise) {
                 assertTrue(svc2.failureCause() instanceof ConfigMismatchException);
                 svc2 = null; // else stop will fail
@@ -1541,7 +1540,7 @@ public class LitelinksTests {
                 try {
                     ThriftClientBuilder.newBuilder(DummyService.Client.class)
                             .withZookeeper(ZK).withServiceName("availtestsvc2").buildOnceAvailable(2000l);
-                    assertTrue("TimeoutException was not called", false);
+                    fail("TimeoutException was not called");
                 } catch (TimeoutException e) {
                     // should come here
                     took = System.currentTimeMillis() - before;
@@ -1704,7 +1703,7 @@ public class LitelinksTests {
                 // should throw SUE despite cluster containing instances
                 try {
                     ilbClient.method_two(33, "", null);
-                    assertTrue("should throw SUE", false);
+                    fail("should throw SUE");
                 } catch (TException te) {
                     assertTrue(te.getCause() instanceof ServiceUnavailableException);
                 }
@@ -1877,7 +1876,7 @@ public class LitelinksTests {
                     }, executor).build();
             try {
                 basic_test(client);
-                assertTrue("ServiceUnavailableException should have been thrown", false);
+                fail("ServiceUnavailableException should have been thrown");
             } catch (TException e) {
                 assertTrue(e.getCause() instanceof ServiceUnavailableException);
             }
@@ -1894,7 +1893,7 @@ public class LitelinksTests {
             }
             try {
                 basic_test(client);
-                assertTrue("ServiceUnavailableException should have been thrown", false);
+                fail("ServiceUnavailableException should have been thrown");
             } catch (TException e) {
                 assertTrue("Unexpected Exception: " + e, e.getCause() instanceof ServiceUnavailableException);
             }
@@ -1965,14 +1964,13 @@ public class LitelinksTests {
                 b4 = System.nanoTime();
                 client1.method_two(4, "", null);
                 took = (System.nanoTime() - b4) / 1000_000L;
-                assertTrue("Timeout exception should have been thrown (took " + took + "ms)",
-                        false); // shouldn't reach here
+                fail("Timeout exception should have been thrown (took " + took + "ms)"); // shouldn't reach here
             } catch (TTransportException e) {
                 took = (System.nanoTime() - b4) / 1000;
 //				if(TTransportException.TIMED_OUT != e.getType()) e.printStackTrace();
                 assertTrue(TTransportException.TIMED_OUT == e.getType()
-                           || TTransportException.UNKNOWN == e.getType()
-                              && e.getCause() instanceof SocketTimeoutException);
+                        || TTransportException.UNKNOWN == e.getType()
+                        && e.getCause() instanceof SocketTimeoutException);
                 assertTrue("took " + took / 1000 + "ms, expected ~1200", took > 1198000 && took < 1280000);
             }
         }
@@ -2032,13 +2030,13 @@ public class LitelinksTests {
                 try {
                     b4 = System.nanoTime();
                     client1.method_two(4, "", null);
-                    assertTrue("Timeout exception should have been thrown", false); // shouldn't reach here
+                    fail("Timeout exception should have been thrown"); // shouldn't reach here
                 } catch (TTransportException e) {
                     took = (System.nanoTime() - b4) / 1000;
                     //	              if(TTransportException.TIMED_OUT != e.getType()) e.printStackTrace();
                     assertTrue(TTransportException.TIMED_OUT == e.getType()
-                               || TTransportException.UNKNOWN == e.getType()
-                                  && e.getCause() instanceof SocketTimeoutException);
+                            || TTransportException.UNKNOWN == e.getType()
+                            && e.getCause() instanceof SocketTimeoutException);
                     assertTrue("took " + took / 1000 + "ms, expected ~1200", took > 1198000 && took < 1280000);
                 }
             } finally {
@@ -2091,9 +2089,9 @@ public class LitelinksTests {
             return new ThriftCallbackFuture<>();
         }
 
-        private void logCallback() {
+        private static void logCallback() {
             System.out.println("async callback from thread " + Thread.currentThread().getName()
-                               + " (id=" + Thread.currentThread().getId() + ")");
+                    + " (id=" + Thread.currentThread().getId() + ")");
         }
     }
 
@@ -2176,12 +2174,12 @@ public class LitelinksTests {
 
             try {
                 ((LitelinksServiceClient) client).isAvailable(); // should throw
-                assertTrue("not thrown", false);
+                fail("not thrown");
             } catch (ClientClosedException cce) {
             }
             try {
                 basic_test(client, false); // should throw
-                assertTrue("not thrown", false);
+                fail("not thrown");
             } catch (ClientClosedException cce) {
             }
 
@@ -2191,12 +2189,12 @@ public class LitelinksTests {
             if (!TServiceClientManager.DELAY_CLOSING) {
                 try {
                     ((LitelinksServiceClient) client2).getServiceInstanceInfo(); // should throw
-                    assertTrue("not thrown", false);
+                    fail("not thrown");
                 } catch (ClientClosedException cce) {
                 }
                 try {
                     basic_test(client2, false); // should throw
-                    assertTrue("not thrown", false);
+                    fail("not thrown");
                 } catch (ClientClosedException cce) {
                 }
             }
@@ -2408,11 +2406,11 @@ public class LitelinksTests {
     }
 
     public static void stopAll(Service... services) {
-		for(Service s : services) if(s!=null) s.stopAsync();
+        for(Service s : services) if(s!=null) s.stopAsync();
         RuntimeException failure = null;
-		for(Service s : services) if(s!=null) try {
-                    s.awaitTerminated();
-		} catch(RuntimeException e) { failure = e; }
+        for(Service s : services) if(s!=null) try {
+            s.awaitTerminated();
+        } catch(RuntimeException e) { failure = e; }
         if (failure != null) throw failure;
     }
 

@@ -83,7 +83,7 @@ public class LitelinksService {
     public static final String DEFAULT_TERMINATION_MSG_PATH = "/dev/termination-log";
     public static final String KUBE_NATIVE_DIR = "/var/run/secrets/kubernetes.io";
 
-    protected final boolean cli = true;
+    protected static final boolean cli = true;
 
     protected final Service theService;
 

@@ -164,15 +164,15 @@ public class StaticServiceRegistry implements ServiceRegistryClient {
 
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (getClass() != obj.getClass()) return false;
-		StaticServiceRegistry other = (StaticServiceRegistry) obj;
-		if (!Objects.equals(hostname, other.hostname)) return false;
-		if (port != other.port)	return false;
-		if (!Objects.equals(protoFactory, other.protoFactory)) return false;
-		if (!Objects.equals(framed, other.framed)) return false;
-		if (!Objects.equals(ssl, other.ssl)) return false;
-		return true;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        StaticServiceRegistry other = (StaticServiceRegistry) obj;
+        if (!Objects.equals(hostname, other.hostname)) return false;
+        if (port != other.port)	return false;
+        if (!Objects.equals(protoFactory, other.protoFactory)) return false;
+        if (!Objects.equals(framed, other.framed)) return false;
+        if (!Objects.equals(ssl, other.ssl)) return false;
+        return true;
     }
 }

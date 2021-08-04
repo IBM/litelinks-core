@@ -176,11 +176,11 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
             ServiceInstanceCache<C> owner, ServiceRegistryClient sourceRegistry) {
         super(config);
         Preconditions.checkArgument(config != null || owner == null);
-		this.instanceId = id;
+        this.instanceId = id;
         this.owner = owner;
-		this.clientMgr = owner != null ? owner.getClientManager() : null;
-		this.source = sourceRegistry;
-		this.connPool = owner == null ? null : new GenericObjectPool<>(
+        this.clientMgr = owner != null ? owner.getClientManager() : null;
+        this.source = sourceRegistry;
+        this.connPool = owner == null ? null : new GenericObjectPool<>(
                 new BasePooledObjectFactory<PooledClient>() {
                     @Override
                     public PooledClient create() throws Exception {
@@ -263,7 +263,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
     enum FailType {CONN, INTERNAL, OTHER}
 
     void returnClient(PooledClient client, FailType failType) throws Exception {
-//		System.out.println("returning client w trans "+client.getClient().getInputProtocol().getTransport()+" suc="+success);
+//      System.out.println("returning client w trans "+client.getClient().getInputProtocol().getTransport()+" suc="+success);
         if (inUseCount != null) {
             lastUsed = System.currentTimeMillis();
             inUseCount.decrementAndGet();
@@ -335,7 +335,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
                     }
                     // reactivate
                     if (owner.notifyFailed(ServiceInstance.this, false)) {
-			            logger.info("Reactivating "+ServiceInstance.this+" after disabling for "+deactivateDuration+"s");
+                        logger.info("Reactivating "+ServiceInstance.this+" after disabling for "+deactivateDuration+"s");
                     }
                 }
             }, deactivateDuration, TimeUnit.SECONDS);
@@ -368,8 +368,8 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
                         // this will attempt to make a new connection
                         if (debug) {
                             logger.debug("About to attempt new connection attempt."
-                                         + " service=" + owner.getServiceName() + " instance=" +
-                                         ServiceInstance.this);
+                                    + " service=" + owner.getServiceName() + " instance=" +
+                                    ServiceInstance.this);
                         }
                         boolean ok = false;
                         PooledClient pc = connPool.borrowObject();
@@ -384,7 +384,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
                             }
                         }
                         logger.info("Connection reinstated to service " + owner.getServiceName() + " instance " +
-                                    ServiceInstance.this);
+                                ServiceInstance.this);
                         // success, reactivate
                         owner.notifyFailed(ServiceInstance.this, false);
                         return; // service now active
@@ -393,7 +393,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
                     } catch (Throwable t) {
                         if (!clientMgr.isTransportException(t)) {
                             logger.error("Unexpected exception in conn retry task for service "
-                                         + owner.getServiceName(), t);
+                                    + owner.getServiceName(), t);
                         }
                         if (nextDelay < 2000L) {
                             nextDelay = 2000L;
@@ -410,7 +410,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
                 thisDelay = ThreadLocalRandom.current().nextLong(thisDelay, thisDelay + thisDelay / 10L);
                 if (debug) {
                     logger.debug("Waiting for " + thisDelay + " ms after conn failure before retrying."
-                                 + " service=" + owner.getServiceName() + " instance=" + ServiceInstance.this);
+                            + " service=" + owner.getServiceName() + " instance=" + ServiceInstance.this);
                 }
                 connRetryThreadPool.schedule(this, thisDelay, TimeUnit.MILLISECONDS);
             }
@@ -421,8 +421,8 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
     public String toString() { // only for logging/debug
         final ServiceInstanceConfig<C> sic = get();
         return (sic != null? sic.toString() : "?")
-               + (instanceId != null? " id=" + instanceId : "")
-               + " state=" + state; //TODO TBD whether to include service name: owner.getServiceName()
+                + (instanceId != null? " id=" + instanceId : "")
+                + " state=" + state; //TODO TBD whether to include service name: owner.getServiceName()
     }
 
     @Override
@@ -531,7 +531,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
         @Override
         public boolean deallocate() {
             return compareAndSet(PooledObjectState.ALLOCATED, PooledObjectState.IDLE)
-                   || compareAndSet(PooledObjectState.RETURNING, PooledObjectState.IDLE);
+                    || compareAndSet(PooledObjectState.RETURNING, PooledObjectState.IDLE);
         }
         @Override
         public void invalidate() {

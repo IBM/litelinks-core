@@ -44,7 +44,7 @@ public interface ConfiguredService {
         private static final long serialVersionUID = 1L;
 
         public ConfigMismatchException() {
-			super();
+            super();
         }
 
         public ConfigMismatchException(String message) {

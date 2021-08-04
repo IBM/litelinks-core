@@ -80,7 +80,7 @@ public class SSLHelper {
         USE_OPEN_SSL = "true".equalsIgnoreCase(useJdkVal) || !OpenSsl.supportsKeyManagerFactory()
                 ? Boolean.FALSE : useJdkVal != null? Boolean.TRUE : null;
         logger.info("Litelinks using OpenSSL for TLS: "
-                    + (USE_OPEN_SSL != null? USE_OPEN_SSL : "when possible"));
+                + (USE_OPEN_SSL != null? USE_OPEN_SSL : "when possible"));
     }
 
     static final String[] TLS_PROTOS = { "TLSv1", "TLSv1.1", "TLSv1.2" };
@@ -325,8 +325,8 @@ public class SSLHelper {
             kmf = getKeyManagerFactory(keyStore, keyStoreInfo.getPassword(), keyMgrAlg);
             if (useOpenSsl == null && containsDsaCert(keyStore)) {
                 logger.info("Disabling litelinks " + (server? "server" : "client")
-                            + " use of OpenSSL for TLS due to keystore containing DSA cert: "
-                            + keyStoreInfo.getFile());
+                        + " use of OpenSSL for TLS due to keystore containing DSA cert: "
+                        + keyStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
             }
         }
@@ -351,8 +351,8 @@ public class SSLHelper {
             trustStore = loadKeyStore(trustStoreInfo);
             if (useOpenSsl == null && containsDsaCert(trustStore)) {
                 logger.info("Disabling litelinks " + (server? "server" : "client")
-                            + " use of OpenSSL for TLS due to truststore containing DSA cert: "
-                            + trustStoreInfo.getFile());
+                        + " use of OpenSSL for TLS due to truststore containing DSA cert: "
+                        + trustStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
             }
         }
@@ -481,16 +481,16 @@ public class SSLHelper {
             return prime * result + (type == null? 0 : type.hashCode());
         }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
             KeyStoreInfo other = (KeyStoreInfo) obj;
-			if(!Objects.equals(file, other.file)) return false;
-			if (!Arrays.equals(password, other.password)) return false;
-			if(!Objects.equals(type, other.type)) return false;
-			return true;
+            if(!Objects.equals(file, other.file)) return false;
+            if (!Arrays.equals(password, other.password)) return false;
+            if(!Objects.equals(type, other.type)) return false;
+            return true;
         }
     }
 

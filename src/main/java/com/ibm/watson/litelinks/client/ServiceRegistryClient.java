@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Interface for service discovery clients - represents
  * the service registry associated with a particular logical service.
  */
+@FunctionalInterface
 public interface ServiceRegistryClient {
 
     /**
@@ -286,7 +287,7 @@ public interface ServiceRegistryClient {
         void refreshServerList(Server[] servers);
     }
 
-    abstract static class RegistryListener implements Listener {
+    abstract class RegistryListener implements Listener {
         abstract void serverAdded(String hostname, int port, long registrationTime, String version,
                 String key, String instanceId, Map<Object, Object> connConfig, ServiceRegistryClient source);
 

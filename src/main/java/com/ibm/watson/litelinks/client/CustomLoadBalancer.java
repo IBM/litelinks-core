@@ -36,7 +36,7 @@ public abstract class CustomLoadBalancer implements LoadBalancer {
         @SuppressWarnings("rawtypes")
         public ListHolder(Object[] arr) {
             this.arr = arr;
-			this.list = (List<ServiceInstanceInfo>)(List)Collections.unmodifiableList(Arrays.asList(arr));
+            this.list = (List<ServiceInstanceInfo>)(List)Collections.unmodifiableList(Arrays.asList(arr));
         }
     }
 

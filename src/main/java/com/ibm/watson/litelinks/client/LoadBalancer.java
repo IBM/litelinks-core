@@ -42,7 +42,7 @@ public interface LoadBalancer {
             return (T) getLeastLoaded(list, list.length);
         }
 
-        final <C extends TServiceClient> ServiceInstance<C> getLeastLoaded(Object[] array, int len) {
+        <C extends TServiceClient> ServiceInstance<C> getLeastLoaded(Object[] array, int len) {
             ServiceInstance<C> chosen = (ServiceInstance<C>) array[0];
             int min = chosen.getInUseCount();
             long oldest = chosen.getLastUsedTime();
