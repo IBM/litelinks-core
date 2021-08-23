@@ -393,13 +393,24 @@ public class SSLHelper {
         if (TRUST_EVERYTHING) {
             return scb.trustManager(InsecureTrustManagerFactory.INSTANCE);
         }
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
+        tmf.init(trustStore);
+
+        // get the default trustManager
+        X509TrustManager delegateTm = null;
+        for (TrustManager tm : tmf.getTrustManagers()) {
+            if (tm instanceof X509TrustManager) {
+                delegateTm = (X509TrustManager) tm;
+                break;
+            }
+        }
         // trust certs file or dir but no truststore
         if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory()? scb.trustManager(trustCertsFile)
+            return !trustCertsFile.isDirectory() ? scb.trustManager(new X509TrustManagerWrapper(delegateTm))
                     : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
         }
         // all other cases
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
+        //TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
         if (trustStore != null) {
             // truststore *and* certs file or dir provided, add certs to truststore
             if (trustCertsFile != null) {
@@ -414,20 +425,8 @@ public class SSLHelper {
                 }
             }
         }
-        tmf.init(trustStore); // passing null here will init with java defaults
-      
-        //get the default trustManager
-        X509TrustManager delegateTm = null;
-        for (TrustManager tm : tmf.getTrustManagers()) {
-            if (tm instanceof X509TrustManager) {
-                delegateTm = (X509TrustManager) tm;
-                break;
-            }
-        }
-        X509TrustManagerWrapper trustManagerWrapper = new X509TrustManagerWrapper(delegateTm);
-        TrustManagerFactoryWrapper tmfWrapper = new TrustManagerFactoryWrapper(trustManagerWrapper);
-        
-        return scb.trustManager(tmfWrapper);
+        //tmf.init(trustStore); // passing null here will init with java defaults
+        return scb.trustManager(tmf);
     }
 
     private static final FilenameFilter CERT_FILES = (d, n)

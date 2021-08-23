@@ -1,77 +1,80 @@
+/*
+ * *****************************************************************
+ *
+ * IBM Confidential
+ * OCO Source Materials
+ *
+ * Licensed Materials - Property of IBM
+ *
+ * litelinks-core
+ * (C) Copyright IBM Corp. 2001, 2018 All Rights Reserved.
+ *
+ * The source code for this program is not published or otherwise
+ * divested of its trade secrets, irrespective of what has been
+ * deposited with the U.S. Copyright Office.
+ *
+ * US Government Users Restricted Rights - Use, duplication or
+ * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ *
+ * ***************************************************************** */
 package com.ibm.watson.litelinks;
 
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.X509ExtendedTrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.net.Socket;
+import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import static io.netty.util.internal.ObjectUtil.*;
+import javax.net.ssl.ManagerFactoryParameters;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
-class X509TrustManagerWrapper extends X509ExtendedTrustManager {
+import io.netty.handler.ssl.util.SimpleTrustManagerFactory;
 
-    private X509Certificate[] x509Certs = {};
-    private X509TrustManager delegate;
+public class X509TrustManagerWrapper extends SimpleTrustManagerFactory {
+    public X509Certificate[] x509Certs = {};
+    private X509TrustManager delegateTm;
 
-    X509TrustManagerWrapper(X509TrustManager delegate) {
-        this.x509Certs = delegate.getAcceptedIssuers();
-        System.out.println("List of certificates: "+x509Certs);
-        this.delegate = checkNotNull(delegate, "delegate");
+    public X509TrustManagerWrapper(X509TrustManager delegateTm) {
+        this.delegateTm = delegateTm;
     }
 
     @Override
-    public void checkClientTrusted(X509Certificate[] chain, String s) throws CertificateException {
-        try {
-            delegate.checkClientTrusted(chain, s);
-        } catch (CertificateException ce) {
-            X509Certificate c = chain[0];
-            String issuerDN = c.getIssuerDN().getName();
-            String subjectDN = c.getSubjectDN().getName();
-            int basicConstraints = c.getBasicConstraints();
+    protected void engineInit(KeyStore keyStore) {
+    }
 
-            if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
-            {
-                X509Certificate[] certArray = new X509Certificate[x509Certs.length+1];
-                System.arraycopy(x509Certs, 0, certArray, 0, x509Certs.length);
-                certArray[x509Certs.length] = c;
-                this.x509Certs = certArray;
-            } else {
-                throw ce;
+    @Override
+    protected void engineInit(ManagerFactoryParameters managerFactoryParameters) {
+    }
+
+    @Override
+    protected TrustManager[] engineGetTrustManagers() {
+        return new TrustManager[] { new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                try {
+                    delegateTm.checkClientTrusted(x509Certificates, s);
+                } catch (Exception e) {
+                    System.out.println("Exception occurred in checkClientTrusted(): "+e.getMessage());
+                    X509Certificate c = x509Certificates[0];
+                    String issuerDN = c.getIssuerDN().getName();
+                    String subjectDN = c.getSubjectDN().getName();
+                    int basicConstraints = c.getBasicConstraints();
+
+                    if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
+                    {
+                        System.out.println("Issuer DN is not equal to subject DN");
+                        x509Certs = new X509Certificate[] { x509Certificates[0] };
+                    }
+                }
             }
-        }
-    }
 
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String s, Socket socket) throws CertificateException {
-        delegate.checkClientTrusted(chain, s);
-    }
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            }
 
-    @Override
-    public void checkClientTrusted(X509Certificate[] chain, String s, SSLEngine sslEngine)
-            throws CertificateException {
-        delegate.checkClientTrusted(chain, s);
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String s) throws CertificateException {
-        delegate.checkServerTrusted(chain, s);
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String s, Socket socket)
-            throws CertificateException {
-        delegate.checkServerTrusted(chain, s);
-    }
-
-    @Override
-    public void checkServerTrusted(X509Certificate[] chain, String s, SSLEngine sslEngine)
-            throws CertificateException {
-        delegate.checkServerTrusted(chain, s);
-    }
-
-    @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        return x509Certs;
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return x509Certs;
+            }
+        } };
     }
 }
