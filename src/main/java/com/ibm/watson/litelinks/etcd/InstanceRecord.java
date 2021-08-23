@@ -36,7 +36,7 @@ public class InstanceRecord extends ServiceRegistryClient.Listener.Server {
     @JsonAnyGetter
     public Map<String, Object> getUnknown() {
         Map<String, Object> unknown = unknownAttrs;
-        return unknown != null? unknown : Collections.emptyMap();
+        return unknown != null ? unknown : Collections.emptyMap();
     }
 
     @JsonAnySetter

@@ -129,7 +129,7 @@ public class NettyTServer extends TServer implements ListeningService {
 
         ExecutorService userThreads = args.getExecutorService();
         userProvidedExecutor = userThreads != null;
-        appThreads = userProvidedExecutor? userThreads : createAppThreads(args.getWorkerThreads());
+        appThreads = userProvidedExecutor ? userThreads : createAppThreads(args.getWorkerThreads());
         sslContext = args.sslContext;
         sbs = new ServerBootstrap()
                 .group(getBossGroup(), NettyCommon.getWorkerGroup())
@@ -181,7 +181,7 @@ public class NettyTServer extends TServer implements ListeningService {
         private long requestCounter;
 
         private ProcessTask(Channel ch) {
-            NettyTTransport ntt = framed? new FramedNettyTTransport(ch, this, sslContext)
+            NettyTTransport ntt = framed ? new FramedNettyTTransport(ch, this, sslContext)
                     : new NettyTTransport(ch, this, sslContext);
             ch.attr(NTT_ATTR_KEY).set(ntt);
             intp = inputProtocolFactory_.getProtocol(ntt);
@@ -264,9 +264,9 @@ public class NettyTServer extends TServer implements ListeningService {
                 // checked exceptions thrown by the service impl go back over the wire
                 // and are logged in the thrift code. checked exceptions which reach
                 // here must be protocol/transport related (e.g. connections closed mid-process)
-                String methodName = ourThread != null? ourThread.getMethodName() : null;
+                String methodName = ourThread != null ? ourThread.getMethodName() : null;
                 String msg = "A client connection terminated before processing"
-                        + (methodName != null? " of method " + methodName : "")
+                        + (methodName != null ? " of method " + methodName : "")
                         + " had completed, after " + msSince(lastReqStartNanos)
                         + "ms and " + requestCounter + " prior reqs processed: ";
                 if (!logger.isDebugEnabled()) {
@@ -345,7 +345,7 @@ public class NettyTServer extends TServer implements ListeningService {
 
     @Override
     public SocketAddress getListeningAddress() {
-        return actualAddress != null? actualAddress : specifiedAddress;
+        return actualAddress != null ? actualAddress : specifiedAddress;
     }
 
     public void setShutdownTimeout(int val, TimeUnit unit) {

@@ -152,7 +152,7 @@ public class NettyTTransport extends TTransport {
         this.reader = reader;
         this.readerScheduled = sslContext == null;
 
-        SSLEngine sslEngine = sslContext == null? null
+        SSLEngine sslEngine = sslContext == null ? null
                 : sslContext.newEngine(chan.alloc());
 
         initializeChannel(chan, sslEngine);
@@ -173,7 +173,7 @@ public class NettyTTransport extends TTransport {
             deadline = 0L;
         } else {
             final long d = System.nanoTime() + timeoutMillis * M;
-            deadline = d == 0L? 1L : d;
+            deadline = d == 0L ? 1L : d;
         }
         dataWritten = false;
     }
@@ -259,8 +259,7 @@ public class NettyTTransport extends TTransport {
                 Future<Channel> hf = sh.handshakeFuture();
                 try {
                     if (!hf.await(timeoutMillis)) {
-                        String message = dataReceived?
-                                "Timed out during SSL handshake"
+                        String message = dataReceived ? "Timed out during SSL handshake"
                                 : "No response received from remote address: " + addr;
                         throw new TTimeoutException(message, true);
                     }
@@ -280,7 +279,7 @@ public class NettyTTransport extends TTransport {
 
     public SocketAddress getRemoteAddress() {
         final Channel c = channel;
-        return c != null? c.remoteAddress() : null;
+        return c != null ? c.remoteAddress() : null;
     }
 
     public SSLSession getSslSession() {
@@ -289,7 +288,7 @@ public class NettyTTransport extends TTransport {
             return null;
         }
         SslHandler sh = c.pipeline().get(SslHandler.class);
-        return sh != null? sh.engine().getSession() : null;
+        return sh != null ? sh.engine().getSession() : null;
     }
 
     @Override
@@ -474,7 +473,7 @@ public class NettyTTransport extends TTransport {
                 readerScheduled = true;
             }
         }
-        writeIdx = writeIdx == wqlen - 1? 0 : writeIdx + 1;
+        writeIdx = writeIdx == wqlen - 1 ? 0 : writeIdx + 1;
         if (abort) {
             close(); // bail if process task can't be scheduled
         }
@@ -530,7 +529,7 @@ public class NettyTTransport extends TTransport {
                 }
                 if(trace) logger.trace("read: " + ByteBufUtil.hexDump(bb));
                 if ((len -= toread) <= 0) {
-                    ByteBuf result = cbb != null? cbb.addComponent(true, bb) : bb;
+                    ByteBuf result = cbb != null ? cbb.addComponent(true, bb) : bb;
                     bb = null;
                     cbb = null;
                     return result;
@@ -649,7 +648,7 @@ public class NettyTTransport extends TTransport {
         if (!ownershipTransferred) {
             bb.release();
         }
-        readIdx = readIdx == rbbq.length - 1? 0 : readIdx + 1;
+        readIdx = readIdx == rbbq.length - 1 ? 0 : readIdx + 1;
         if (readBufsReady.decrementAndGet() <= 0) {
             return true;
         }
@@ -699,7 +698,7 @@ public class NettyTTransport extends TTransport {
     @Override
     public byte[] getBuffer() {
         final ByteBuf bb = rbb;
-        return bb != null && bb.hasArray()? bb.array() : null;
+        return bb != null && bb.hasArray() ? bb.array() : null;
     }
 
     @Override
@@ -724,7 +723,7 @@ public class NettyTTransport extends TTransport {
      */
     private int bufferReadyCount() {
         int rbr = readBufsReady.get();
-        return rbr > 0? rbr : channel == null? -1 : 0;
+        return rbr > 0 ? rbr : channel == null ? -1 : 0;
     }
 
     /**

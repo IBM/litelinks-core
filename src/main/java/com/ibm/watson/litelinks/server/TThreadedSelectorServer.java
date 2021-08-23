@@ -79,7 +79,7 @@ public class TThreadedSelectorServer extends org.apache.thrift.server.TThreadedS
     @Override
     public SocketAddress getListeningAddress() {
         TServerTransport stransport = serverTransport_;
-        return stransport instanceof TNonblockingServerSocket?
+        return stransport instanceof TNonblockingServerSocket ?
                 getSSAddress((TNonblockingServerSocket) stransport) : bindAddr;
     }
 

@@ -50,12 +50,12 @@ public class SDITestingThriftServiceImpl extends ThriftService implements DummyS
 
     @Override
     public String serviceVersion() {
-        return provideVersion? "impl-provided-vers" : super.serviceVersion();
+        return provideVersion ? "impl-provided-vers" : super.serviceVersion();
     }
 
     @Override
     public String defaultServiceName() {
-        return provideVersion? "impl-provided-name" : super.defaultServiceName();
+        return provideVersion ? "impl-provided-name" : super.defaultServiceName();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class SDITestingThriftServiceImpl extends ThriftService implements DummyS
                + sdi.getPublicPort() + "__"
                + sdi.getServiceName() + "__"
                + sdi.getServiceVersion() + "__" +
-               (la != null? la.getClass().getName() : "null") + "__" +
+               (la != null ? la.getClass().getName() : "null") + "__" +
                (la instanceof InetSocketAddress
                        ? ((InetSocketAddress) la).getPort() : "-99") + "__" + la;
     }

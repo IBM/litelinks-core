@@ -262,6 +262,6 @@ public abstract class ThriftService extends AbstractService {
     @Deprecated
     protected final int getListeningPort() {
         SocketAddress addr = getInstanceDeploymentInfo().getListeningAddress();
-        return addr instanceof InetSocketAddress? ((InetSocketAddress) addr).getPort() : 0;
+        return addr instanceof InetSocketAddress ? ((InetSocketAddress) addr).getPort() : 0;
     }
 }

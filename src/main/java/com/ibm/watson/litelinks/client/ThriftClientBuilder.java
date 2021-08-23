@@ -52,7 +52,7 @@ import static com.ibm.watson.litelinks.client.TServiceClientManager.THRIFT_CLIEN
  *
  * @param <I> the thrift-generated client interface
  */
-public class ThriftClientBuilder<I> {
+public final class ThriftClientBuilder<I> {
 
     private static final Logger logger = LoggerFactory.getLogger(ThriftClientBuilder.class);
 
@@ -288,7 +288,7 @@ public class ThriftClientBuilder<I> {
                 } else {
                     throw new IllegalStateException(
                             "No registry configured for litelinks service client"
-                            + (serviceName != null? " " + serviceName : "") + ", set "
+                            + (serviceName != null ? " " + serviceName : "") + ", set "
                             + LitelinksEnvVariableNames.CLIENT_DISCOVERY + " env var");
                 }
             }
@@ -472,7 +472,7 @@ public class ThriftClientBuilder<I> {
      */
     public ThriftClientBuilder<I> withTimeout(long duration, TimeUnit unit) {
         int timeout = (int) TimeUnit.MILLISECONDS.convert(duration, unit);
-        return withTimeout(timeout > 0? timeout : 1);
+        return withTimeout(timeout > 0 ? timeout : 1);
     }
 
     /**
@@ -629,7 +629,7 @@ public class ThriftClientBuilder<I> {
     // ----
 
     static RuntimeException asRuntimeException(Throwable t) {
-        return t instanceof RuntimeException? (RuntimeException) t : new RuntimeException(t);
+        return t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
     }
 
     private Method getMethod(String name) throws IllegalArgumentException {

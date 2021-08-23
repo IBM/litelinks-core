@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class TDBinaryProtocol extends TBinaryProtocol {
 
-    public static final TProtocolFactory FACTORY = tr -> tr instanceof NettyTTransport?
+    public static final TProtocolFactory FACTORY = tr -> tr instanceof NettyTTransport ?
             new TDBinaryProtocol(tr) : new SafeBinaryTProtocol(new TBinaryProtocol(tr));
 
     public TDBinaryProtocol(TTransport trans) {

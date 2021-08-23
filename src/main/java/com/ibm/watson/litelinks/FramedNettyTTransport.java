@@ -118,7 +118,7 @@ public class FramedNettyTTransport extends NettyTTransport {
     public void flush() throws WTTransportException {
         final List<ByteBuf> pendingBufs = pendingWrites;
         ByteBuf wbuf = writeBuf();
-        ByteBuf firstBuf = pendingBufs.isEmpty()? wbuf : pendingBufs.get(0);
+        ByteBuf firstBuf = pendingBufs.isEmpty() ? wbuf : pendingBufs.get(0);
         ByteBuf unwrapped; // must unwrap in-case read-only
         while ((unwrapped = firstBuf.unwrap()) != null && unwrapped != firstBuf) {
             firstBuf = unwrapped;

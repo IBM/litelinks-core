@@ -59,7 +59,7 @@ public class ServerRequestThread extends FastThreadLocalThread {
                 t.setStackTrace(getStackTrace());
                 String method = reqMethodName;
                 logger.info("Interrupting server thread " + getName() +
-                            (method != null? " processing method " + method : "") +
+                            (method != null ? " processing method " + method : "") +
                             " after " + runningTimeMillis + "ms", t);
             }
         }
@@ -72,7 +72,7 @@ public class ServerRequestThread extends FastThreadLocalThread {
     }
 
     void startRequest(long nanoTime) {
-        reqStartTime = nanoTime != 0L? nanoTime : 1L;
+        reqStartTime = nanoTime != 0L ? nanoTime : 1L;
     }
 
     // public because called from LitelinksTProtoExtension
@@ -85,7 +85,7 @@ public class ServerRequestThread extends FastThreadLocalThread {
     }
 
     long runningTimeMillis() {
-        return reqStartTime == 0L? 0L : NettyTServer.msSince(reqStartTime);
+        return reqStartTime == 0L ? 0L : NettyTServer.msSince(reqStartTime);
     }
 
     protected boolean logInterrupt(long runningTimeMillis) {

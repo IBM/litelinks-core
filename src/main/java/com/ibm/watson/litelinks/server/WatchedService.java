@@ -194,7 +194,7 @@ public abstract class WatchedService extends AbstractService implements Listenin
     }
 
     protected ConfiguredService getConfiguredService() {
-        return monitoredService instanceof ConfiguredService?
+        return monitoredService instanceof ConfiguredService ?
                 (ConfiguredService) monitoredService : null;
     }
 
@@ -282,8 +282,8 @@ public abstract class WatchedService extends AbstractService implements Listenin
                 String name = getServiceName(), version = getServiceVersion(), iid = getInstanceId();
                 validateServiceParams(name, version, iid);
                 logger.info("About to register service '" + name + "'"
-                            + (version != null? " with version '" + version + "'" : "")
-                            + (iid != null? ", instanceId = '" + iid + "'" : ""));
+                            + (version != null ? " with version '" + version + "'" : "")
+                            + (iid != null ? ", instanceId = '" + iid + "'" : ""));
                 if (healthProbe != null) {
                     healthProbe.setReady(true);
                 }
@@ -333,7 +333,7 @@ public abstract class WatchedService extends AbstractService implements Listenin
 
     public String getHost() throws UnknownHostException {
         String hn = deploymentInfo.getPublicAddress();
-        return hn != null? hn : determineHostString();
+        return hn != null ? hn : determineHostString();
     }
 
     /**
@@ -346,9 +346,9 @@ public abstract class WatchedService extends AbstractService implements Listenin
         }
         int privatePort = deploymentInfo.getPrivatePort();
         String privateDomain = deploymentInfo.getPrivateDomain();
-        return privatePort == -1? null :
+        return privatePort == -1 ? null :
                 privateHost + ":" + privatePort +
-                (privateDomain != null? ";" + privateDomain : "");
+                (privateDomain != null ? ";" + privateDomain : "");
     }
 
     private static void validateServiceParams(String name, String version, String instanceId)
@@ -366,12 +366,12 @@ public abstract class WatchedService extends AbstractService implements Listenin
 
     protected static String determinePrivateEndpoint() {
         String pe = System.getProperty(LitelinksSystemPropNames.PRIVATE_ENDPOINT);
-        return pe != null? pe : System.getenv(LitelinksEnvVariableNames.PRIVATE_ENDPOINT);
+        return pe != null ? pe : System.getenv(LitelinksEnvVariableNames.PRIVATE_ENDPOINT);
     }
 
     protected static String determinePrivateDomainId() {
         String pd = System.getProperty(LitelinksSystemPropNames.PRIVATE_DOMAIN_ID);
-        return pd != null? pd : System.getenv(LitelinksEnvVariableNames.PRIVATE_DOMAIN_ID);
+        return pd != null ? pd : System.getenv(LitelinksEnvVariableNames.PRIVATE_DOMAIN_ID);
     }
 
     protected static String determineHostString() throws UnknownHostException {
@@ -391,7 +391,7 @@ public abstract class WatchedService extends AbstractService implements Listenin
         InetAddress address = InetAddress.getLocalHost();
         boolean useHostname = "localhostname".equals(
                 System.getProperty(LitelinksSystemPropNames.DEFAULT_PUBLISH_ADDR));
-        return useHostname? address.getCanonicalHostName() : address.getHostAddress();
+        return useHostname ? address.getCanonicalHostName() : address.getHostAddress();
     }
 
     @Override

@@ -389,7 +389,7 @@ public class TServiceClientManager<C extends TServiceClient>
 
 
     private static final BlockingQueue<TServiceClientManager<?>> closeQueue
-            = DELAY_CLOSING? new PriorityBlockingQueue<>(11, new Comparator<TServiceClientManager<?>>() {
+            = DELAY_CLOSING ? new PriorityBlockingQueue<>(11, new Comparator<TServiceClientManager<?>>() {
         @Override
         public int compare(TServiceClientManager<?> cm1,
                 TServiceClientManager<?> cm2) {
@@ -507,9 +507,9 @@ public class TServiceClientManager<C extends TServiceClient>
                 }
             }
         }
-        Map<String, String> metadata = metaImb != null? metaImb.build()
+        Map<String, String> metadata = metaImb != null ? metaImb.build()
                 : Collections.emptyMap();
-        Map<String, MethodInfo> methodInfos = miImb != null? miImb.build()
+        Map<String, MethodInfo> methodInfos = miImb != null ? miImb.build()
                 : Collections.emptyMap();
         return new ThriftInstanceConfig(hostname, port, version, registrationTime,
                 connConfig, metadata, methodInfos);
@@ -519,7 +519,7 @@ public class TServiceClientManager<C extends TServiceClient>
     public C createClient(ServiceInstanceConfig<C> config, long timeoutMillis) throws TTransportException {
         if (!(config instanceof TServiceClientManager.ThriftInstanceConfig)) {
             throw new IllegalStateException("Invalid type of service config: "
-                                            + config != null? config.getClass().toString() : "null");
+                                            + config != null ? config.getClass().toString() : "null");
         }
         return ((ThriftInstanceConfig) config).createClient(timeoutMillis);
     }
@@ -680,7 +680,7 @@ public class TServiceClientManager<C extends TServiceClient>
                         // if either our domain or the target domain isn't set,
                         // assume we are in the *same* domain (for backward compatibility)
                         String ourDomain = privateDomainId();
-                        String domain = ourDomain == null? null : m.group(3);
+                        String domain = ourDomain == null ? null : m.group(3);
                         if (domain == null || Objects.equals(domain, ourDomain)) {
                             host = m.group(1);
                             port = Integer.parseInt(m.group(2));
@@ -698,10 +698,10 @@ public class TServiceClientManager<C extends TServiceClient>
                     timeoutMillis, framed, sslContext);
             if (logger.isDebugEnabled()) {
                 logger.debug("Successfully opened new "
-                             + (sslContext != null? "TLS " : "") + "transport to " + host + ":" + port);
+                             + (sslContext != null ? "TLS " : "") + "transport to " + host + ":" + port);
             }
             TProtocol in = protoFactory.getProtocol(trans);
-            TProtocol out = extraInfoSupported?
+            TProtocol out = extraInfoSupported ?
                     new InterceptTOutProto(in, sendMDC) : in;
             return clientFactory.getClient(in, out);
         }
@@ -719,7 +719,7 @@ public class TServiceClientManager<C extends TServiceClient>
         @Override
         public int hashCode() {
             return Objects.hash(getVersion(), framed, extraInfoSupported, host, port,
-                    protoFactory != null? protoFactory.getClass() : null,
+                    protoFactory != null ? protoFactory.getClass() : null,
                     sslContext == null, sslProtocol);
         }
 
