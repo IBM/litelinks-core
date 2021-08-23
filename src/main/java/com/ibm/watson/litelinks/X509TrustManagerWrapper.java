@@ -16,6 +16,7 @@ class X509TrustManagerWrapper extends X509ExtendedTrustManager {
 
     X509TrustManagerWrapper(X509TrustManager delegate) {
         this.x509Certs = delegate.getAcceptedIssuers();
+        System.out.println("List of certificates: "+x509Certs);
         this.delegate = checkNotNull(delegate, "delegate");
     }
 
@@ -34,7 +35,7 @@ class X509TrustManagerWrapper extends X509ExtendedTrustManager {
                 X509Certificate[] certArray = new X509Certificate[x509Certs.length+1];
                 System.arraycopy(x509Certs, 0, certArray, 0, x509Certs.length);
                 certArray[x509Certs.length] = c;
-                this.x509Certs = new X509Certificate[] { chain[0] };
+                this.x509Certs = certArray;
             } else {
                 throw ce;
             }
@@ -71,6 +72,6 @@ class X509TrustManagerWrapper extends X509ExtendedTrustManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        return delegate.getAcceptedIssuers();
+        return x509Certs;
     }
 }
