@@ -29,6 +29,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.util.TrustManagerFactoryWrapper;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
@@ -39,7 +40,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -391,7 +395,7 @@ public class SSLHelper {
         }
         // trust certs file or dir but no truststore
         if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory()? scb.trustManager(CustomTrustManagerFactory.INSTANCE)
+            return !trustCertsFile.isDirectory()? scb.trustManager(trustCertsFile)
                     : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
         }
         // all other cases
@@ -411,7 +415,19 @@ public class SSLHelper {
             }
         }
         tmf.init(trustStore); // passing null here will init with java defaults
-        return scb.trustManager(tmf);
+      
+        //get the default trustManager
+        X509TrustManager delegateTm = null;
+        for (TrustManager tm : tmf.getTrustManagers()) {
+            if (tm instanceof X509TrustManager) {
+                delegateTm = (X509TrustManager) tm;
+                break;
+            }
+        }
+        X509TrustManagerWrapper trustManagerWrapper = new X509TrustManagerWrapper(delegateTm);
+        TrustManagerFactoryWrapper tmWrapper = new TrustManagerFactoryWrapper(trustManagerWrapper);
+        
+        return scb.trustManager(tmWrapper);
     }
 
     private static final FilenameFilter CERT_FILES = (d, n)
