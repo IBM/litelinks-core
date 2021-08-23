@@ -15,7 +15,7 @@ class X509TrustManagerWrapper extends X509ExtendedTrustManager {
     private X509TrustManager delegate;
 
     X509TrustManagerWrapper(X509TrustManager delegate) {
-        this.x509Certs = getAcceptedIssuers();
+        this.x509Certs = delegate.getAcceptedIssuers();
         this.delegate = checkNotNull(delegate, "delegate");
     }
 
