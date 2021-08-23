@@ -1,18 +1,22 @@
 /*
- * Copyright 2021 IBM Corporation
+ * *****************************************************************
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy
- * of the License at
+ * IBM Confidential
+ * OCO Source Materials
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed Materials - Property of IBM
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- */
+ * litelinks-core
+ * (C) Copyright IBM Corp. 2001, 2018 All Rights Reserved.
+ *
+ * The source code for this program is not published or otherwise
+ * divested of its trade secrets, irrespective of what has been
+ * deposited with the U.S. Copyright Office.
+ *
+ * US Government Users Restricted Rights - Use, duplication or
+ * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+ *
+ * ***************************************************************** */
 package com.ibm.watson.litelinks;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -63,8 +67,11 @@ import java.util.stream.Collectors;
 
 /**
  * Helper for retrieving SSL config parameters and building an {@link SSLContext}.
+ *
+ * @author nickhill
  */
 public class SSLHelper {
+    static String copyright() { return Copyright.IBM_COPYRIGHT; }
 
     private static final Logger logger = LoggerFactory.getLogger(SSLHelper.class);
 
@@ -80,12 +87,13 @@ public class SSLHelper {
         USE_OPEN_SSL = "true".equalsIgnoreCase(useJdkVal) || !OpenSsl.supportsKeyManagerFactory()
                 ? Boolean.FALSE : useJdkVal != null? Boolean.TRUE : null;
         logger.info("Litelinks using OpenSSL for TLS: "
-                + (USE_OPEN_SSL != null? USE_OPEN_SSL : "when possible"));
+                    + (USE_OPEN_SSL != null? USE_OPEN_SSL : "when possible"));
     }
 
     static final String[] TLS_PROTOS = { "TLSv1", "TLSv1.1", "TLSv1.2" };
 
     public static class SSLParams {
+        static String copyright() { return Copyright.IBM_COPYRIGHT; }
 
         public static final String DEFAULT_PROTOCOL = "TLSv1.2"; // was previously "TLS"
         public static final String DEFAULT_STORE_TYPE = "JKS";
@@ -325,8 +333,8 @@ public class SSLHelper {
             kmf = getKeyManagerFactory(keyStore, keyStoreInfo.getPassword(), keyMgrAlg);
             if (useOpenSsl == null && containsDsaCert(keyStore)) {
                 logger.info("Disabling litelinks " + (server? "server" : "client")
-                        + " use of OpenSSL for TLS due to keystore containing DSA cert: "
-                        + keyStoreInfo.getFile());
+                            + " use of OpenSSL for TLS due to keystore containing DSA cert: "
+                            + keyStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
             }
         }
@@ -351,8 +359,8 @@ public class SSLHelper {
             trustStore = loadKeyStore(trustStoreInfo);
             if (useOpenSsl == null && containsDsaCert(trustStore)) {
                 logger.info("Disabling litelinks " + (server? "server" : "client")
-                        + " use of OpenSSL for TLS due to truststore containing DSA cert: "
-                        + trustStoreInfo.getFile());
+                            + " use of OpenSSL for TLS due to truststore containing DSA cert: "
+                            + trustStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
             }
         }
@@ -391,7 +399,7 @@ public class SSLHelper {
         }
         // trust certs file or dir but no truststore
         if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory()? scb.trustManager(trustCertsFile)
+            return !trustCertsFile.isDirectory()? scb.trustManager(CustomTrustManagerFactory.INSTANCE)
                     : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
         }
         // all other cases
@@ -453,6 +461,7 @@ public class SSLHelper {
     }
 
     public static class KeyStoreInfo {
+        static String copyright() { return Copyright.IBM_COPYRIGHT; }
 
         private final File file;
         private final char[] password;
@@ -481,16 +490,16 @@ public class SSLHelper {
             return prime * result + (type == null? 0 : type.hashCode());
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
             KeyStoreInfo other = (KeyStoreInfo) obj;
-            if(!Objects.equals(file, other.file)) return false;
-            if (!Arrays.equals(password, other.password)) return false;
-            if(!Objects.equals(type, other.type)) return false;
-            return true;
+			if(!Objects.equals(file, other.file)) return false;
+			if (!Arrays.equals(password, other.password)) return false;
+			if(!Objects.equals(type, other.type)) return false;
+			return true;
         }
     }
 
