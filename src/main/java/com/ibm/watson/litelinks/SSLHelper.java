@@ -425,9 +425,9 @@ public class SSLHelper {
             }
         }
         X509TrustManagerWrapper trustManagerWrapper = new X509TrustManagerWrapper(delegateTm);
-        TrustManagerFactoryWrapper tmWrapper = new TrustManagerFactoryWrapper(trustManagerWrapper);
+        TrustManagerFactoryWrapper tmfWrapper = new TrustManagerFactoryWrapper(trustManagerWrapper);
         
-        return scb.trustManager(tmWrapper);
+        return scb.trustManager(tmfWrapper);
     }
 
     private static final FilenameFilter CERT_FILES = (d, n)
