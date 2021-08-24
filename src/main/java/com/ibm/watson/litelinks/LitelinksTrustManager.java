@@ -58,6 +58,10 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
                 array[i] = c;
                 x509Certs = array;
             }
+            else
+            {
+                throw e;
+            }
         }
         
     }
@@ -84,6 +88,10 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
                 }
                 array[i] = c;
                 x509Certs = array;
+            }
+            else
+            {
+                throw e;
             }
         }
     }
