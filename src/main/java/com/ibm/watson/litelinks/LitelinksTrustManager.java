@@ -28,9 +28,9 @@ import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 
 public class LitelinksTrustManager extends X509ExtendedTrustManager {
-    public X509Certificate[] x509Certs = {};
-    public X509TrustManager delegateTm;
-    public boolean IsAccepted = true;
+    private X509Certificate[] x509Certs = {};
+    private X509TrustManager delegateTm;
+    private boolean IsAccepted = true;
 
     public LitelinksTrustManager(X509TrustManager delegateTm) {
         this.delegateTm = delegateTm;
