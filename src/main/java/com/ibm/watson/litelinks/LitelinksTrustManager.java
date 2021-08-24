@@ -37,63 +37,13 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        try {
-            delegateTm.checkClientTrusted(chain, authType);
-        } catch (Exception e) {
-            System.out.println("Exception occurred in checkClientTrusted(): " + e.getMessage());
-            X509Certificate c = chain[0];
-            String issuerDN = c.getIssuerDN().getName();
-            String subjectDN = c.getSubjectDN().getName();
-            int basicConstraints = c.getBasicConstraints();
-
-            if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
-            {
-                System.out.println("Issuer DN is not equal to subject DN");
-                x509Certs = delegateTm.getAcceptedIssuers();
-                X509Certificate[] array = new X509Certificate[x509Certs.length + 1];
-                int i = 0;
-                for (X509Certificate cert : x509Certs) {
-                    array[i++] = cert;
-                }
-                array[i] = c;
-                x509Certs = array;
-            }
-            else
-            {
-                throw e;
-            }
-        }
-        
+        delegateTm.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        try {
-            delegateTm.checkServerTrusted(chain, authType);
-        } catch (Exception e) {
-            System.out.println("Exception occurred in checkServerTrusted(): " + e.getMessage());
-            X509Certificate c = chain[0];
-            String issuerDN = c.getIssuerDN().getName();
-            String subjectDN = c.getSubjectDN().getName();
-            int basicConstraints = c.getBasicConstraints();
+        delegateTm.checkServerTrusted(chain, authType);
 
-            if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
-            {
-                System.out.println("Issuer DN is not equal to subject DN");
-                x509Certs = delegateTm.getAcceptedIssuers();
-                X509Certificate[] array = new X509Certificate[x509Certs.length + 1];
-                int i = 0;
-                for (X509Certificate cert : x509Certs) {
-                    array[i++] = cert;
-                }
-                array[i] = c;
-                x509Certs = array;
-            }
-            else
-            {
-                throw e;
-            }
-        }
     }
 
     @Override
