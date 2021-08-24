@@ -406,7 +406,7 @@ public class SSLHelper {
         }
         // trust certs file or dir but no truststore
         if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory() ? scb.trustManager(new X509TrustManagerWrapper(delegateTm))
+            return !trustCertsFile.isDirectory() ? scb.trustManager(new LitelinksTrustManager(delegateTm))
                     : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
         }
         // all other cases
