@@ -394,38 +394,32 @@ public class SSLHelper {
             return scb.trustManager(InsecureTrustManagerFactory.INSTANCE);
         }
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
-        tmf.init(trustStore);
-
-        // get the default trustManager
-        X509TrustManager delegateTm = null;
+        // Add any provided certs to truststore
+        if (trustCertsFile != null) {
+            if (trustStore == null) {
+                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                trustStore.load(null, null);
+            }
+            final String prefix = trustCertsFile.getName();
+            int index = 0;
+            for (X509Certificate cert : generateCertificates(trustCertsFile)) {
+                String alias;
+                do {
+                    alias = prefix + '_' + index++;
+                } while (trustStore.isCertificateEntry(alias));
+                trustStore.setCertificateEntry(alias, cert);
+            }
+        }
+        tmf.init(trustStore); // passing null here will init with java defaults
+      
+        // Wrap X.509 TrustManager in one which also trusts based on direct certificate identity
         for (TrustManager tm : tmf.getTrustManagers()) {
             if (tm instanceof X509TrustManager) {
-                delegateTm = (X509TrustManager) tm;
+                TrustManager newTm = new LitelinksTrustManager((X509TrustManager) tm);
+                tmf = new TrustManagerFactoryWrapper(newTm);
                 break;
             }
         }
-        // trust certs file or dir but no truststore
-        if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory() ? scb.trustManager(new LitelinksTrustManager(delegateTm))
-                    : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
-        }
-        // all other cases
-        //TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
-        if (trustStore != null) {
-            // truststore *and* certs file or dir provided, add certs to truststore
-            if (trustCertsFile != null) {
-                final String prefix = trustCertsFile.getName();
-                int index = 0;
-                for (X509Certificate cert : generateCertificates(trustCertsFile)) {
-                    String alias;
-                    do {
-                        alias = prefix + '_' + index++;
-                    } while (trustStore.isCertificateEntry(alias));
-                    trustStore.setCertificateEntry(alias, cert);
-                }
-            }
-        }
-        //tmf.init(trustStore); // passing null here will init with java defaults
         return scb.trustManager(tmf);
     }
 
