@@ -35,7 +35,6 @@ public class LitelinksTrustManager extends SimpleTrustManagerFactory {
 
     public LitelinksTrustManager(X509TrustManager delegateTm) {
         this.delegateTm = delegateTm;
-        x509Certs = delegateTm.getAcceptedIssuers();
     }
 
     @Override
@@ -63,6 +62,7 @@ public class LitelinksTrustManager extends SimpleTrustManagerFactory {
                     if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
                     {
                         System.out.println("Issuer DN is not equal to subject DN");
+                        x509Certs = delegateTm.getAcceptedIssuers();
                         X509Certificate[] array = new X509Certificate[x509Certs.length + 1];
                         int i = 0;
                         for (X509Certificate cert : x509Certs) {
@@ -88,6 +88,7 @@ public class LitelinksTrustManager extends SimpleTrustManagerFactory {
                     if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // if it's non-ca, accept it
                     {
                         System.out.println("Issuer DN is not equal to subject DN");
+                        x509Certs = delegateTm.getAcceptedIssuers();
                         X509Certificate[] array = new X509Certificate[x509Certs.length + 1];
                         int i = 0;
                         for (X509Certificate cert : x509Certs) {
@@ -101,7 +102,7 @@ public class LitelinksTrustManager extends SimpleTrustManagerFactory {
 
             @Override
             public X509Certificate[] getAcceptedIssuers() {
-                return null;
+                return x509Certs;
             }
         } };
     }
