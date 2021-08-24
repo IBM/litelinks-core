@@ -30,9 +30,21 @@ import javax.net.ssl.X509TrustManager;
 public class LitelinksTrustManager extends X509ExtendedTrustManager {
     public X509Certificate[] x509Certs = {};
     public X509TrustManager delegateTm;
+    public boolean IsAccepted = true;
 
     public LitelinksTrustManager(X509TrustManager delegateTm) {
         this.delegateTm = delegateTm;
+        for(X509Certificate c : delegateTm.getAcceptedIssuers())
+        {
+            String issuerDN = c.getIssuerDN().getName();
+            String subjectDN = c.getSubjectDN().getName();
+            int basicConstraints = c.getBasicConstraints();
+            if(!issuerDN.equals(subjectDN) && basicConstraints == -1) //not all CA
+            {
+                IsAccepted = false;
+                break;
+            }
+        }
     }
 
     @Override
@@ -48,7 +60,10 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        return x509Certs;
+        if(IsAccepted)
+            return delegateTm.getAcceptedIssuers();
+        else
+            return x509Certs;
     }
 
     @Override
