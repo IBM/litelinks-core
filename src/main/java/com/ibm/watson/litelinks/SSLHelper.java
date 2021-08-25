@@ -29,6 +29,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.util.TrustManagerFactoryWrapper;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
@@ -39,7 +40,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -356,7 +360,7 @@ public class SSLHelper {
                 useOpenSsl = Boolean.FALSE;
             }
         }
-        configureTrustManager(scb, trustStore, trustMgrAlg, trustCertsFile);
+        configureTrustManager(scb, trustStore, trustMgrAlg, trustCertsFile, server && reqClientAuth);
         // Use OpenSSL provider unless specifically disabled for some reason
         // (unsupported on platform, disabled via env var, or DSA cert found in keystore)
         boolean openSsl = useOpenSsl == null || useOpenSsl;
@@ -385,32 +389,39 @@ public class SSLHelper {
     }
 
     private static SslContextBuilder configureTrustManager(SslContextBuilder scb, KeyStore trustStore,
-            String trustMgrAlg, File trustCertsFile) throws IOException, GeneralSecurityException {
+            String trustMgrAlg, File trustCertsFile, boolean reqClientAuth) throws IOException, GeneralSecurityException {
         if (TRUST_EVERYTHING) {
             return scb.trustManager(InsecureTrustManagerFactory.INSTANCE);
         }
-        // trust certs file or dir but no truststore
-        if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory() ? scb.trustManager(trustCertsFile)
-                    : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
-        }
-        // all other cases
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustMgrAlg);
-        if (trustStore != null) {
-            // truststore *and* certs file or dir provided, add certs to truststore
-            if (trustCertsFile != null) {
-                final String prefix = trustCertsFile.getName();
-                int index = 0;
-                for (X509Certificate cert : generateCertificates(trustCertsFile)) {
-                    String alias;
-                    do {
-                        alias = prefix + '_' + index++;
-                    } while (trustStore.isCertificateEntry(alias));
-                    trustStore.setCertificateEntry(alias, cert);
-                }
+        // Add any provided certs to truststore
+        if (trustCertsFile != null) {
+            if (trustStore == null) {
+                trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                trustStore.load(null, null);
+            }
+            final String prefix = trustCertsFile.getName();
+            int index = 0;
+            for (X509Certificate cert : generateCertificates(trustCertsFile)) {
+                String alias;
+                do {
+                    alias = prefix + '_' + index++;
+                } while (trustStore.isCertificateEntry(alias));
+                trustStore.setCertificateEntry(alias, cert);
             }
         }
         tmf.init(trustStore); // passing null here will init with java defaults
+
+        if (reqClientAuth) {
+            // Wrap X.509 TrustManager in one which allows use of non-CA certs in client authentication
+            for (TrustManager tm : tmf.getTrustManagers()) {
+                if (tm instanceof X509TrustManager) {
+                    TrustManager newTm = new LitelinksTrustManager((X509TrustManager) tm);
+                    tmf = new TrustManagerFactoryWrapper(newTm);
+                    break;
+                }
+            }
+        }
         return scb.trustManager(tmf);
     }
 
