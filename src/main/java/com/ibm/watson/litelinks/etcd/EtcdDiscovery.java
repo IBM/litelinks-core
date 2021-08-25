@@ -26,7 +26,7 @@ public class EtcdDiscovery {
             ByteString.copyFromUtf8("/litelinks/");
 
     public static ByteString litelinksPrefix(ByteString namespace) {
-        return namespace == null? LITELINKS_PREFIX : namespace.concat(LITELINKS_PREFIX);
+        return namespace == null ? LITELINKS_PREFIX : namespace.concat(LITELINKS_PREFIX);
     }
 
     public static ByteString servicePrefix(ByteString litelinksPrefix, String serviceName) {

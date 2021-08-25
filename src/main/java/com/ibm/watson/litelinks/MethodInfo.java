@@ -71,7 +71,7 @@ public class MethodInfo {
     // only public access because used from .server and .client packages
 
     public String serialize() {
-        String idp = idempotent? "idp=t" : "idp=f";
+        String idp = idempotent ? "idp=t" : "idp=f";
         if (instanceFailureExceptions == null || instanceFailureExceptions.isEmpty()) {
             return idp;
         }
@@ -176,7 +176,7 @@ public class MethodInfo {
                 instanceFailureExceptions = null;
             }
             if (instanceFailureExceptions == null) {
-                return idempotent? IDEMPOTENT : DEFAULT_MI;
+                return idempotent ? IDEMPOTENT : DEFAULT_MI;
             }
             return new MethodInfo(idempotent, instanceFailureExceptions);
         }

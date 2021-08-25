@@ -139,8 +139,8 @@ public class DefaultThriftServer extends AbstractService
             RequestListener[] reqListeners) {
         this.tsClass = tsClass;
         this.specifiedAddr = bindAddress;
-        this.tpf = tpf != null? tpf : DEFAULT_TPROTOFAC;
-        this.sslMode = sslMode == null? SSLMode.NONE : sslMode;
+        this.tpf = tpf != null ? tpf : DEFAULT_TPROTOFAC;
+        this.sslMode = sslMode == null ? SSLMode.NONE : sslMode;
         this.serviceEventThreads = LitelinksService.getServiceEventThreads();
         this.startupTimeoutSecs = startupTimeoutSecs;
         this.reqListeners = reqListeners;
@@ -164,7 +164,7 @@ public class DefaultThriftServer extends AbstractService
 
     private static String getServiceName(ThriftService ts, TProcessor tp,
             Class<? extends ThriftService> tsClass) {
-        String name = ts != null? ts.defaultServiceName() : null;
+        String name = ts != null ? ts.defaultServiceName() : null;
         if (name == null) {
             if (tp != null) {
                 Class<?> encClass = tp.getClass().getEnclosingClass();
@@ -182,7 +182,7 @@ public class DefaultThriftServer extends AbstractService
     @Override
     public String getServiceVersion() {
         ThriftService ts = this.ts;
-        return ts != null? ts.serviceVersion() : null;
+        return ts != null ? ts.serviceVersion() : null;
     }
 
     public TProtocolFactory getProtocolFactory() {
@@ -201,7 +201,7 @@ public class DefaultThriftServer extends AbstractService
     public Map<String, String> getConfig() throws Exception {
         SSLMode sm = this.sslMode;
         TProcessor tp = this.tp;
-        Class<?> tpc = tp != null? tp.getClass() : null;
+        Class<?> tpc = tp != null ? tp.getClass() : null;
         String scName = TMultiplexedProcessor.class.equals(tpc) ? MULTIPLEX_CLASS
                 : tpc != null && tpc.getDeclaringClass() != null ? tpc.getDeclaringClass().getName() : null;
         ImmutableMap.Builder<String, String> bld = new ImmutableMap.Builder<String, String>()
@@ -239,7 +239,7 @@ public class DefaultThriftServer extends AbstractService
         if(sc == null) return null;
         Class<?> iface = getIfaceFromSvcClass(sc);
         if(iface == null) return null;
-        Map<String, MethodInfo> providedInfos = ts != null? ts.provideMethodInfo() : null;
+        Map<String, MethodInfo> providedInfos = ts != null ? ts.provideMethodInfo() : null;
         Class<?> implClass = null;
         if (tp instanceof TBaseProcessor) {
             try {
@@ -252,13 +252,13 @@ public class DefaultThriftServer extends AbstractService
         if (implClass == null && (providedInfos == null || providedInfos.isEmpty())) {
             return null;
         }
-        Map<String, MethodInfo> infosCopy = providedInfos == null || providedInfos.isEmpty()?
+        Map<String, MethodInfo> infosCopy = providedInfos == null || providedInfos.isEmpty() ?
                 null : new HashMap<>(providedInfos);
 
         ImmutableMap.Builder<String, MethodInfo> bld = new ImmutableMap.Builder<String, MethodInfo>();
         for (Method ifaceMeth : iface.getMethods()) {
             String methName = ifaceMeth.getName();
-            MethodInfo providedInfo = infosCopy != null? infosCopy.remove(methName) : null;
+            MethodInfo providedInfo = infosCopy != null ? infosCopy.remove(methName) : null;
             // provided takes precedence
             if (providedInfo != null) {
                 bld.put(methName, providedInfo);
@@ -273,7 +273,7 @@ public class DefaultThriftServer extends AbstractService
                         Class<? extends Exception>[] instFailTypes = instFailAnnot != null
                                 ? instFailAnnot.value() : null;
                         Set<Class<? extends Exception>> instFailTypesSet =
-                                instFailTypes == null || instFailTypes.length == 0?
+                                instFailTypes == null || instFailTypes.length == 0 ?
                                         null : new HashSet<>(Arrays.asList(instFailTypes));
                         if (idempotent || instFailTypes != null && instFailTypes.length > 0) {
                             bld.put(methName, MethodInfo.builder().setIdempotent(idempotent)
@@ -283,7 +283,7 @@ public class DefaultThriftServer extends AbstractService
                 } catch (NoSuchMethodException nsme) {}
             }
         }
-        MethodInfo defaultMi = infosCopy != null? infosCopy.remove(MethodInfo.DEFAULT) : null;
+        MethodInfo defaultMi = infosCopy != null ? infosCopy.remove(MethodInfo.DEFAULT) : null;
         if (defaultMi != null) {
             bld.put(MethodInfo.DEFAULT, defaultMi);
         }
@@ -393,7 +393,7 @@ public class DefaultThriftServer extends AbstractService
             @Override
             public void running() {
                 long took = System.currentTimeMillis() - implStartTime;
-                String time = took < 30000? took + "ms" : took / 1000 + "s";
+                String time = took < 30000 ? took + "ms" : took / 1000 + "s";
                 logger.info("service implementation initialization complete, took " + time);
                 final ThriftService ts = DefaultThriftServer.this.ts;
                 final TProcessor tp = ts.getTProcessor();
@@ -447,7 +447,7 @@ public class DefaultThriftServer extends AbstractService
     private void startThriftServer(TProcessor tp, ExecutorService appThreads, final ScheduledFuture<?> timeoutFuture)
             throws IOException, GeneralSecurityException {
         int requestThreads = getNumRequestThreads();
-        logger.info("Thrift server max # request threads = " + (requestThreads != -1? requestThreads : "unlimited"));
+        logger.info("Thrift server max # request threads = " + (requestThreads != -1 ? requestThreads : "unlimited"));
         if (appThreads != null) {
             logger.info(
                     "Using service-impl-provided threadpool for requests, max # worker threads reported above won't apply");
@@ -697,7 +697,7 @@ public class DefaultThriftServer extends AbstractService
             }
         } catch (IllegalStateException e) {
             Throwable t = ts.failureCause();
-            throw t != null? t : e;
+            throw t != null ? t : e;
         }
     }
 

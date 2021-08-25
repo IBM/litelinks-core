@@ -212,7 +212,7 @@ public class LitelinksTProtoExtension {
                         for (int i = listenerCount - 1; i >= 0; i--) {
                             try {
                                 listeners[i].requestComplete(msg.name, cxt, intercept.transParams,
-                                        listenerErr, handles != null? handles[i] : null);
+                                        listenerErr, handles != null ? handles[i] : null);
                             } catch (RuntimeException e) {
                                 logger.warn("requestComplete method of listener "
                                             + listeners[i].getClass().getName() + " threw exception", e);
@@ -268,7 +268,7 @@ public class LitelinksTProtoExtension {
             this.msg = msg;
             this.transParams = transParams;
             TTransport tt = delegate.getTransport();
-            ntt = tt instanceof NettyTTransport?
+            ntt = tt instanceof NettyTTransport ?
                     (NettyTTransport) tt : null;
         }
         public void setMsg(TMessage msg) {
@@ -302,7 +302,7 @@ public class LitelinksTProtoExtension {
         public void writeMessageBegin(TMessage tMessage) throws TException {
             Map<String, String> cxtMap = ThreadContext.getCurrentContext();
             long timeoutNanos = ThreadContext.nanosUntilDeadline();
-            Map<?, ?> mdc = this.mdc? MDC.getCopyOfContextMap() : null;
+            Map<?, ?> mdc = this.mdc ? MDC.getCopyOfContextMap() : null;
             boolean inclMdc = mdc != null && !mdc.isEmpty();
             boolean inclCxt = cxtMap != null || timeoutNanos != -1L;
             if (!inclCxt && !inclMdc) {
@@ -313,7 +313,7 @@ public class LitelinksTProtoExtension {
             delegate.writeMessageBegin(msg);
             delegate.writeString(tMessage.name);
             // one-byte manifest
-            delegate.writeByte(inclMdc? inclCxt? INCL_BOTH : INCL_MDC : INCL_CUSTOM);
+            delegate.writeByte(inclMdc ? (inclCxt ? INCL_BOTH : INCL_MDC) : INCL_CUSTOM);
             if (inclCxt) {
                 writeContextMap(delegate, cxtMap, timeoutNanos);
             }
@@ -333,7 +333,7 @@ public class LitelinksTProtoExtension {
 
     private static void writeContextMap(TProtocol out,
             Map<?, ?> map, long timeoutNanos) throws TException {
-        int size = map != null? map.size() : 0;
+        int size = map != null ? map.size() : 0;
         boolean skipDeadlineEntry = false;
         if (timeoutNanos == -1L) {
             out.writeI16((short) size);

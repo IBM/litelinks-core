@@ -96,7 +96,7 @@ public class StaticServiceRegistry implements ServiceRegistryClient {
         this.framed = framed;
         this.extraInfo = extraInfo;
         try {
-            protoFactory = protoFac == null? null
+            protoFactory = protoFac == null ? null
                     : Class.forName(protoFac).asSubclass(TProtocolFactory.class);
         } catch (ClassNotFoundException cnfe) {
             throw new IllegalArgumentException("protofac class not found: " + protoFac, cnfe);

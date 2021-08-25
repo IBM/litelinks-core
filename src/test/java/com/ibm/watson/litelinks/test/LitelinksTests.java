@@ -809,9 +809,9 @@ public class LitelinksTests {
                     public String method_one(String arg1, DummyStruct arg2, boolean arg3)
                             throws TException {
                         Map<String, String> cxt = ThreadContext.getCurrentContext();
-                        String v1 = MDC.get(arg1), v2 = cxt != null? cxt.get(arg1) : "";
+                        String v1 = MDC.get(arg1), v2 = cxt != null ? cxt.get(arg1) : "";
                         Map<String, String> mdcMap = MDC.getCopyOfContextMap();
-                        return v1 + "____" + (mdcMap != null? mdcMap.size() : "null") + (cxt != null? "__" + v2 : "");
+                        return v1 + "____" + (mdcMap != null ? mdcMap.size() : "null") + (cxt != null ? "__" + v2 : "");
                     }
                 };
                 svc = LitelinksService.createService(SettableThriftServiceImpl.class, ZK, sname).startAsync();
@@ -1103,7 +1103,7 @@ public class LitelinksTests {
                         return "finished!";
                     }
                 };
-                String threadsBefore = abort?
+                String threadsBefore = abort ?
                         System.setProperty(LitelinksSystemPropNames.CANCEL_ON_CLIENT_CLOSE, "true") : null;
                 try {
                     svc = LitelinksService.createService(SettableThriftServiceImpl.class, ZK, "aborttest").startAsync();
@@ -1153,7 +1153,7 @@ public class LitelinksTests {
         ExecutorService exec = Executors.newCachedThreadPool();
         String sname = "conctest";
         synchronized (SettableThriftServiceImpl.class) {
-            String propBefore = propval != null?
+            String propBefore = propval != null ?
                     System.setProperty(LitelinksSystemPropNames.NUM_PROCESS_THREADS, propval) : null;
             try {
                 final AtomicInteger inflight = new AtomicInteger(), max = new AtomicInteger();
@@ -2387,9 +2387,9 @@ public class LitelinksTests {
 
     public static void basic_test2(DummyService.Iface client, final String input,
             boolean printtime, boolean sleep) throws Exception {
-        long b4 = printtime? System.nanoTime() : 0l;
+        long b4 = printtime ? System.nanoTime() : 0l;
         ByteBuffer bb = ByteBuffer.wrap(input.getBytes());
-        DummyStruct ds = client.method_two(sleep? 1 : 0, input, bb.duplicate());
+        DummyStruct ds = client.method_two(sleep ? 1 : 0, input, bb.duplicate());
         if (printtime) {
             long took = System.nanoTime() - b4, inside = ds.getLongField();
             System.out.println("took " + took / 1000 + "µs with overhead=" + (took - inside) / 1000 + "µs");

@@ -127,10 +127,10 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
         @Override
         public void event(EventType type, KeyValue keyValue) {
             try {
-                ByteString key = keyValue != null? keyValue.getKey() : null;
+                ByteString key = keyValue != null ? keyValue.getKey() : null;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Etcd event: " + type
-                            + " key=" + (key != null? key.toStringUtf8() : "null"));
+                            + " key=" + (key != null ? key.toStringUtf8() : "null"));
                 }
                 if (type == EventType.INITIALIZED) {
                     if (!preInit.isEmpty()) {
@@ -142,7 +142,7 @@ public class EtcdServiceRegistry implements ServiceRegistryClient {
                 }
                 if (key == null || key.size() <= prefixLen) {
                     logger.warn("Event " + type + " for unexpected key: "
-                            + (key != null? key.toStringUtf8() : "null"));
+                            + (key != null ? key.toStringUtf8() : "null"));
                     return;
                 }
                 String instance = key.substring(prefixLen).toStringUtf8();

@@ -77,7 +77,7 @@ public abstract class ClientTTransportFactory {
                         throw new TTransportException("Could not connect to " + hostname + " on port " + port, e);
                     }
                 }
-                TTransport transport = framed? new TFramedTransport(socket) : socket;
+                TTransport transport = framed ? new TFramedTransport(socket) : socket;
                 if (!transport.isOpen()) {
                     transport.open();
                 }
@@ -98,7 +98,7 @@ public abstract class ClientTTransportFactory {
             //TODO *maybe* cache these address objects (but if so only
             // short-lived since we may want to refresh DNS)
             final InetSocketAddress addr = new InetSocketAddress(hostname, port);
-            final TTransport transport = framed?
+            final TTransport transport = framed ?
                     new FramedNettyTTransport(addr, timeoutMillis, alloc, sslContext) :
                     new NettyTTransport(addr, timeoutMillis, alloc, sslContext);
             transport.open();

@@ -140,7 +140,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                         ChildData cdata = nodeCache.getCurrentData();
                         if (logger.isDebugEnabled()) {
                             logger.debug("service " + serviceName + " node change event: "
-                                    + (cdata == null || cdata.getStat() == null? "null"
+                                    + (cdata == null || cdata.getStat() == null ? "null"
                                     : "new zk vers=" + cdata.getStat().getVersion()));
                         }
                         processDataChange(cdata);
@@ -299,7 +299,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
             try {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Zookeeper event: " + event.getType() + " path=" +
-                            (event.getData() != null? event.getData().getPath() : "null"));
+                            (event.getData() != null ? event.getData().getPath() : "null"));
                 }
                 switch (event.getType()) {
                 case INITIALIZED:
@@ -384,7 +384,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                     if (instanceId == null) {
                         // use last component of znode path if server doesn't provide id
                         int ls = key.lastIndexOf('/');
-                        instanceId = ls >= 0? key.substring(ls + 1) : key;
+                        instanceId = ls >= 0 ? key.substring(ls + 1) : key;
                     }
                     return new Listener.Server(parts[0], Integer.parseInt(parts[1]),
                             cd.getStat().getCtime(), version, key, instanceId, config);
@@ -406,7 +406,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
 
     @Override
     public int hashCode() {
-        return 31 + (connString == null? 0 : connString.hashCode());
+        return 31 + (connString == null ? 0 : connString.hashCode());
     }
 
     @Override
@@ -419,7 +419,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
 
     public static ZookeeperServiceRegistry getDefault() {
         final String defaultConnString = ZookeeperClient.resolveConnString(null); // will come from env var
-        return defaultConnString != null? new ZookeeperServiceRegistry(defaultConnString) : null;
+        return defaultConnString != null ? new ZookeeperServiceRegistry(defaultConnString) : null;
     }
 
     // utility method

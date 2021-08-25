@@ -53,7 +53,7 @@ import static com.ibm.watson.litelinks.client.ThriftClientBuilder.asRuntimeExcep
  *
  * @param <C> client class
  */
-public class ServiceInstanceCache<C> extends RegistryListener {
+public final class ServiceInstanceCache<C> extends RegistryListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceInstanceCache.class);
 
@@ -174,6 +174,9 @@ public class ServiceInstanceCache<C> extends RegistryListener {
     @Override
     public void serverAdded(String hostname, int port, long registrationTime, String version,
             String key, String instanceId, Map<Object, Object> connConfig, ServiceRegistryClient source) {
+        if (isClosed()) {
+            return;
+        }
         final ServiceInstanceConfig<C> sic = makeAndValidateConfig(hostname, port,
                 version, registrationTime, connConfig, key);
         if (sic == null) {
@@ -208,12 +211,15 @@ public class ServiceInstanceCache<C> extends RegistryListener {
     @Override
     public void serversAddedAndOrRemoved(Server[] servers, String[] removedIds,
             ServiceRegistryClient source) {
+        if (isClosed()) {
+            return;
+        }
         List<ServiceInstance<C>> toRem = null, toAdd = null;
         if (removedIds != null) {
             for (String id : removedIds) {
                 final ServiceInstance<C> rem = serviceInstances.remove(id);
                 if (rem != null) {
-                    (toRem != null? toRem : (toRem = new LinkedList<>())).add(rem);
+                    (toRem != null ? toRem : (toRem = new LinkedList<>())).add(rem);
                 }
             }
         }
@@ -227,7 +233,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
                 ServiceInstance<C> si = serviceInstances.get(s.key);
                 if (si == null) {
                     serviceInstances.put(s.key, si = new ServiceInstance<C>(s.instanceId, sic, this, source));
-                    (toAdd != null? toAdd : (toAdd = new LinkedList<>())).add(si);
+                    (toAdd != null ? toAdd : (toAdd = new LinkedList<>())).add(si);
                 } else {
                     si.updateConfig(sic);
                 }
@@ -307,12 +313,12 @@ public class ServiceInstanceCache<C> extends RegistryListener {
         final ReentrantLock lock = listsLock;
         lock.lock();
         try {
-            boolean changed = failed?
+            boolean changed = failed ?
                     si.changeState(State.ACTIVE, State.FAILING) :
                     si.changeState(State.FAILING, State.ACTIVE);
             if (changed) {
-                problemList = failed? add(problemList, si) : remove(problemList, si);
-                activeList = failed? remove(activeList, si) : add(activeList, si);
+                problemList = failed ? add(problemList, si) : remove(problemList, si);
+                activeList = failed ? remove(activeList, si) : add(activeList, si);
                 updateJointRef(false);
             }
             return changed;
@@ -341,7 +347,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
                 List<ServiceInstanceInfo> newInfos = getServiceInstanceInfo(listsAfter, false);
                 boolean availableBefore = availableAndValid(listsBefore, false),
                         availableNow = !newInfos.isEmpty();
-                notifyListeners(availableBefore == availableNow? null : availableNow, newInfos);
+                notifyListeners(availableBefore == availableNow ? null : availableNow, newInfos);
             }
         } finally {
             lock.unlock();
@@ -355,27 +361,27 @@ public class ServiceInstanceCache<C> extends RegistryListener {
         List<Object> nw = null, gone = new LinkedList<>(), chg = new LinkedList<>();
         for (Object si : alb) {
             if (!contains(al, si)) {
-                (contains(pl, si)? chg : gone).add(si);
+                (contains(pl, si) ? chg : gone).add(si);
             }
         }
         int activeGone = gone.size();
         for (Object si : plb) {
             if (!contains(pl, si)) {
-                (contains(al, si)? chg : gone).add(si);
+                (contains(al, si) ? chg : gone).add(si);
             }
         }
         int totalGone = gone.size();
         if (a > alb.length - activeGone) {
             for (Object si : al) {
                 if (!contains(alb, si) && !chg.contains(si)) {
-                    (nw != null? nw : (nw = new LinkedList<>())).add(si);
+                    (nw != null ? nw : (nw = new LinkedList<>())).add(si);
                 }
             }
         }
         if (p > plb.length + activeGone - totalGone) {
             for (Object si : pl) {
                 if (!contains(plb, si) && !chg.contains(si)) {
-                    (nw != null? nw : (nw = new LinkedList<>())).add(si);
+                    (nw != null ? nw : (nw = new LinkedList<>())).add(si);
                 }
             }
         }
@@ -468,7 +474,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
         Object[] array = arrays[0];
         int num = array.length;
         if (num > 0) {
-            ServiceInstance<C> si = num == 1 && balancers.inclusive? (ServiceInstance<C>) array[0]
+            ServiceInstance<C> si = num == 1 && balancers.inclusive ? (ServiceInstance<C>) array[0]
                     : balancers.get(LBType.ACTIVE).getNext(array, method, args);
             if (si != null || balancers.inclusive) {
                 return si;
@@ -482,7 +488,7 @@ public class ServiceInstanceCache<C> extends RegistryListener {
         } else if (!useFailing) {
             return (ServiceInstance<C>) ALL_FAILING; // no non-problem instances
         }
-        return num == 1 && balancers.inclusive? (ServiceInstance<C>) array[0]
+        return num == 1 && balancers.inclusive ? (ServiceInstance<C>) array[0]
                 : balancers.get(LBType.PROBLEM).getNext(array, method, args);
     }
 
@@ -567,8 +573,8 @@ public class ServiceInstanceCache<C> extends RegistryListener {
             }
             return Collections.emptyList();
         }
-        Object[] arr = empty0? arrays[1] : empty1? arrays[0]
-                : ObjectArrays.concat(arrays[0], arrays[1], Object.class);
+        Object[] arr = empty0 ? arrays[1] : (empty1 ? arrays[0]
+                : ObjectArrays.concat(arrays[0], arrays[1], Object.class));
         return (List<ServiceInstanceInfo>) (List) Collections.unmodifiableList(Arrays.asList(arr));
     }
 

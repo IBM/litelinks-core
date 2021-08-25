@@ -40,10 +40,10 @@ public class NettyCommon {
     static {
         useEpoll = Epoll.isAvailable() &&
                    !"false".equals(System.getProperty(LitelinksSystemPropNames.USE_EPOLL_TRANSPORT));
-        logger.info(useEpoll? "Litelinks using native transport (epoll)"
+        logger.info(useEpoll ? "Litelinks using native transport (epoll)"
                 : "Litelinks using NIO transport");
 
-        channelClass = useEpoll? EpollSocketChannel.class : NioSocketChannel.class;
+        channelClass = useEpoll ? EpollSocketChannel.class : NioSocketChannel.class;
     }
 
     public static boolean useEpoll() {
@@ -63,7 +63,7 @@ public class NettyCommon {
             synchronized (NettyCommon.class) {
                 if ((wg = workerGroup) == null) {
                     String propCount = System.getProperty(LitelinksSystemPropNames.WORKER_ELG_SIZE);
-                    int count = propCount != null? Integer.parseInt(propCount)
+                    int count = propCount != null ? Integer.parseInt(propCount)
                             : Math.min(8, Runtime.getRuntime().availableProcessors()); // default
                     logger.info("Creating litelinks shared worker ELG with " + count + " threads");
                     workerGroup = wg = newEventLoopGroup(count, "ll-elg-thread-%d");
@@ -78,7 +78,7 @@ public class NettyCommon {
         ThreadFactory tfac = new ThreadFactoryBuilder().setDaemon(true)
                 .setThreadFactory(FastThreadLocalThread::new)
                 .setNameFormat(nameFormat).build();
-        EventLoopGroup elg = useEpoll? new EpollEventLoopGroup(size, tfac)
+        EventLoopGroup elg = useEpoll ? new EpollEventLoopGroup(size, tfac)
                 : new NioEventLoopGroup(size, tfac);
         OrderedShutdownHooks.addHook(3, elg::shutdownGracefully);
         return elg;

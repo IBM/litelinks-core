@@ -90,7 +90,7 @@ class SettableServiceDeploymentInfo implements ServiceDeploymentInfo {
             return explicitOrZero;
         }
         final SocketAddress laddr = listeningAddress;
-        return laddr instanceof InetSocketAddress?
+        return laddr instanceof InetSocketAddress ?
                 ((InetSocketAddress) laddr).getPort() : 0;
     }
 

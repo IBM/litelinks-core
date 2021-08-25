@@ -211,7 +211,7 @@ public class CheckInstanceHealth {
                     logger.info("Service has instance id \"" + instanceInfo.getInstanceId() + '"');
                 }
                 // although not "live", we're not necessarily "dead" either (might be starting up)
-                System.exit(livenessCheck? 0 : 1);
+                System.exit(livenessCheck ? 0 : 1);
             }
 
             // Perform the actual health check of this particular instance
