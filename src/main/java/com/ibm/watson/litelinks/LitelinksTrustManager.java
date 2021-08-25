@@ -1,22 +1,18 @@
 /*
- * *****************************************************************
+ * Copyright 2021 IBM Corporation
  *
- * IBM Confidential
- * OCO Source Materials
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
  *
- * Licensed Materials - Property of IBM
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * litelinks-core
- * (C) Copyright IBM Corp. 2001, 2018 All Rights Reserved.
- *
- * The source code for this program is not published or otherwise
- * divested of its trade secrets, irrespective of what has been
- * deposited with the U.S. Copyright Office.
- *
- * US Government Users Restricted Rights - Use, duplication or
- * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
- *
- * ***************************************************************** */
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ */
 package com.ibm.watson.litelinks;
 
 import java.net.Socket;
@@ -27,21 +23,26 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import io.netty.util.internal.EmptyArrays;
+
+/**
+ * Litelinks-specific extension for X509TrustManger
+ *
+ */
 public class LitelinksTrustManager extends X509ExtendedTrustManager {
-    private X509Certificate[] x509Certs = {};
-    private X509TrustManager delegateTm;
-    private boolean isAccepted = true;
+    private final X509ExtendedTrustManager delegate;
+    private boolean sendCertRequest = true;
 
     public LitelinksTrustManager(X509TrustManager delegateTm) {
-        this.delegateTm = delegateTm;
+        this.delegate = (X509ExtendedTrustManager)delegateTm;
         for(X509Certificate c : delegateTm.getAcceptedIssuers())
         {
-            String issuerDN = c.getIssuerDN().getName();
-            String subjectDN = c.getSubjectDN().getName();
+            String issuerDN = c.getIssuerX500Principal().getName();
+            String subjectDN = c.getSubjectX500Principal().getName();
             int basicConstraints = c.getBasicConstraints();
             if(!issuerDN.equals(subjectDN) && basicConstraints == -1) //not all CA
             {
-                isAccepted = false;
+                sendCertRequest = false;
                 break;
             }
         }
@@ -49,21 +50,18 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        delegateTm.checkClientTrusted(chain, authType);
+        delegate.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        delegateTm.checkServerTrusted(chain, authType);
+        delegate.checkServerTrusted(chain, authType);
 
     }
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        if(isAccepted)
-            return delegateTm.getAcceptedIssuers();
-        else
-            return x509Certs;
+        return sendCertRequest ? delegate.getAcceptedIssuers() : EmptyArrays.EMPTY_X509_CERTIFICATES;
     }
 
     @Override
