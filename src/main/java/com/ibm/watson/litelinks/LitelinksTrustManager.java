@@ -33,19 +33,20 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
     private final X509ExtendedTrustManager delegate;
     private boolean sendCertRequest = true;
 
-    public LitelinksTrustManager(X509TrustManager delegateTm) {
-        this.delegate = (X509ExtendedTrustManager)delegateTm;
-        for(X509Certificate c : delegateTm.getAcceptedIssuers())
-        {
-            String issuerDN = c.getIssuerX500Principal().getName();
-            String subjectDN = c.getSubjectX500Principal().getName();
-            int basicConstraints = c.getBasicConstraints();
-            if(!issuerDN.equals(subjectDN) && basicConstraints == -1) //not all CA
-            {
-                sendCertRequest = false;
-                break;
+    public LitelinksTrustManager(X509TrustManager delegate) {
+        this.delegate = (X509ExtendedTrustManager)delegate;
+        if (delegate.getAcceptedIssuers() != null) {
+            for (X509Certificate c : delegate.getAcceptedIssuers()) {
+                String issuerDN = c.getIssuerX500Principal().getName();
+                String subjectDN = c.getSubjectX500Principal().getName();
+                int basicConstraints = c.getBasicConstraints();
+                if (!issuerDN.equals(subjectDN) && basicConstraints == -1) // not all CA
+                {
+                    sendCertRequest = false;
+                    break;
+                }
             }
-        }
+        }   
     }
 
     @Override
@@ -67,20 +68,24 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket)
             throws CertificateException {
+        delegate.checkClientTrusted(chain, authType, socket);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket)
             throws CertificateException {
+        delegate.checkServerTrusted(chain, authType, socket);
     }
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
             throws CertificateException {
+        delegate.checkClientTrusted(chain, authType, engine);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
             throws CertificateException {
+        delegate.checkServerTrusted(chain, authType, engine);
     }
 }
