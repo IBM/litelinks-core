@@ -360,7 +360,7 @@ public class SSLHelper {
                 useOpenSsl = Boolean.FALSE;
             }
         }
-        configureTrustManager(scb, trustStore, trustMgrAlg, trustCertsFile, reqClientAuth);
+        configureTrustManager(scb, trustStore, trustMgrAlg, trustCertsFile, server && reqClientAuth);
         // Use OpenSSL provider unless specifically disabled for some reason
         // (unsupported on platform, disabled via env var, or DSA cert found in keystore)
         boolean openSsl = useOpenSsl == null || useOpenSsl;
@@ -411,16 +411,17 @@ public class SSLHelper {
             }
         }
         tmf.init(trustStore); // passing null here will init with java defaults
-      
-        // Wrap X.509 TrustManager in one which allows use of non-CA certs in client authentication
-        for (TrustManager tm : tmf.getTrustManagers()) {
-            if (tm instanceof X509TrustManager) {
-                if(reqClientAuth)
-                {
+
+        if (reqClientAuth) {
+            // Wrap X.509 TrustManager in one which allows use of non-CA certs in client authentication
+            for (TrustManager tm : tmf.getTrustManagers()) {
+                if (tm instanceof X509TrustManager) {
+
                     TrustManager newTm = new LitelinksTrustManager((X509TrustManager) tm);
                     tmf = new TrustManagerFactoryWrapper(newTm);
+
+                    break;
                 }
-                break;
             }
         }
         return scb.trustManager(tmf);

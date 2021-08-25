@@ -199,12 +199,10 @@ public class LitelinksLauncherTests {
     public void external_ssl_nonca_test() throws Exception {
         final Class<?> C = LitelinksLauncherTests.class;
         final String keyPath = C.getResource("/nonca.key.pem").getFile();
-        final String key2Path = C.getResource("/nonca.key.pem").getFile();
         final String certPath = C.getResource("/certs/nonca.cert.pem").getFile();
-        final String cert2Path = C.getResource("/certs/nonca.cert.pem").getFile();
 
-        do_ssl_ca_test(arr("trustcerts.path", cert2Path, "key.path", keyPath, "key.certpath", certPath),
-                arr("trustcerts.path", certPath, "key.path", key2Path, "key.certpath", cert2Path));
+        do_ssl_ca_test(arr("trustcerts.path", certPath, "key.path", keyPath, "key.certpath", certPath),
+                arr("trustcerts.path", certPath, "key.path", keyPath, "key.certpath", certPath));
     }
 
     private static void do_ssl_test(String[] clientargs, String[] serverargs,
