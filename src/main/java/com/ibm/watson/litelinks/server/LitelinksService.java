@@ -148,7 +148,7 @@ public class LitelinksService {
             } finally {
                 Throwable failure = ws.serviceFailure;
                 if (failure != null) {
-                    terminationMessage = ws.started? "Service failed post-startup" : "Service startup failed";
+                    terminationMessage = ws.started ? "Service failed post-startup" : "Service startup failed";
                     terminationMessage += ": " + terminationMessageFromThrowable(failure);
                 }
             }
@@ -579,7 +579,7 @@ public class LitelinksService {
         int publicPort =
                 config.publicPort != -1 ? config.publicPort : getDefaultPort(LitelinksEnvVariableNames.PUBLIC_PORT);
         String serviceName =
-                config.serviceName == null || !config.serviceName.trim().isEmpty()? config.serviceName : null;
+                config.serviceName == null || !config.serviceName.trim().isEmpty() ? config.serviceName : null;
         int startTimeoutSecs = getStartupTimeoutSecs(config);
 
         // instantiate any provided RequestListeners
@@ -665,7 +665,7 @@ public class LitelinksService {
             return config.serviceRegistry;
         }
         String registryParam = System.getProperty(LitelinksSystemPropNames.SERVER_REGISTRY);
-        return registryParam != null? registryParam
+        return registryParam != null ? registryParam
                 : System.getenv(LitelinksEnvVariableNames.SERVER_REGISTRY);
     }
 
@@ -673,7 +673,7 @@ public class LitelinksService {
         //get the port from the env variable or fallback to the default
         String port = System.getenv(envVar);
         try {
-            return port != null? Integer.parseInt(port) : DEFAULT_PORT;
+            return port != null ? Integer.parseInt(port) : DEFAULT_PORT;
         } catch (NumberFormatException nfe) {
             throw new NumberFormatException("The " + envVar + " environment variable is not a number: " + port);
         }
@@ -693,7 +693,7 @@ public class LitelinksService {
             if (cli) {
                 startCLIThread();
             }
-            System.out.println("service starting" + (cli? ", type \"stop\" to stop" : ""));
+            System.out.println("service starting" + (cli ? ", type \"stop\" to stop" : ""));
 
             try {
                 theService.awaitRunning(startupTimeoutSecs, TimeUnit.SECONDS);
@@ -779,7 +779,7 @@ public class LitelinksService {
         String prefix = t.getClass() == Exception.class || t.getClass() == Throwable.class
                 ? "" : t.getClass().getSimpleName() + ": ";
         String message = t.getLocalizedMessage();
-        return prefix + (message != null && !message.isEmpty()? message : "See logs for details");
+        return prefix + (message != null && !message.isEmpty() ? message : "See logs for details");
     }
 
     private static void writeTerminationMessage(String message) {
@@ -807,7 +807,7 @@ public class LitelinksService {
 
 
     protected static int getStartupTimeoutSecs(ServiceDeploymentConfig config) {
-        return config.startTimeoutSecs == -1? DefaultThriftServer.DEFAULT_STARTUP_TIMEOUT_SECS :
+        return config.startTimeoutSecs == -1 ? DefaultThriftServer.DEFAULT_STARTUP_TIMEOUT_SECS :
                 config.startTimeoutSecs;
     }
 
@@ -825,7 +825,7 @@ public class LitelinksService {
             return DEFAULT_SIG_SHUTDOWN_TIMEOUT_MS;
         }
         String[] parts = sst.split(",");
-        return Long.parseLong(parts.length > 1? parts[1] : parts[0]);
+        return Long.parseLong(parts.length > 1 ? parts[1] : parts[0]);
     }
 
     protected static long getMaxShutdownTimeoutMs() {

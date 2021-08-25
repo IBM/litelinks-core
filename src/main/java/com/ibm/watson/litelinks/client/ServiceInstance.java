@@ -48,7 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <C> client class
  */
 @SuppressWarnings("serial")
-public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceInstanceConfig<C>>
+public final class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceInstanceConfig<C>>
         implements LitelinksServiceClient.ServiceInstanceInfo {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceInstance.class);
@@ -65,9 +65,9 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
             this.version = version;
             this.registrationTime = registrationTime;
             this.metadata = metadata;
-            this.methodInfos = methodInfos != null? methodInfos : Collections.emptyMap();
+            this.methodInfos = methodInfos != null ? methodInfos : Collections.emptyMap();
             MethodInfo defaultInfo = methodInfos.get(MethodInfo.DEFAULT);
-            defaultMethodInfo = defaultInfo != null? defaultInfo : MethodInfo.DEFAULT_MI;
+            defaultMethodInfo = defaultInfo != null ? defaultInfo : MethodInfo.DEFAULT_MI;
         }
 
         abstract String getHost();
@@ -101,9 +101,9 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
         public String toString() {
             String host = getHost(), vers = getVersion();
             int port = getPort();
-            StringBuilder sb = new StringBuilder(host != null? host : "null")
+            StringBuilder sb = new StringBuilder(host != null ? host : "null")
                     .append(':').append(port);
-            return (vers == null? sb : sb.append(";v=").append(vers)).toString();
+            return (vers == null ? sb : sb.append(";v=").append(vers)).toString();
         }
     }
 
@@ -164,7 +164,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
     }
 
     public int getInUseCount() {
-        return inUseCount != null? inUseCount.get() : connPool.getNumActive();
+        return inUseCount != null ? inUseCount.get() : connPool.getNumActive();
     }
 
     public long getLastUsedTime() {
@@ -353,7 +353,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
             final ObjectPool<PooledClient> connPool = ServiceInstance.this.connPool;
             final boolean debug = logger.isDebugEnabled();
             boolean first = true;
-            long nextDelay = onCreate? 3000L : 40L;
+            long nextDelay = onCreate ? 3000L : 40L;
 
             @Override
             public void run() {
@@ -420,8 +420,8 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
     @Override
     public String toString() { // only for logging/debug
         final ServiceInstanceConfig<C> sic = get();
-        return (sic != null? sic.toString() : "?")
-                + (instanceId != null? " id=" + instanceId : "")
+        return (sic != null ? sic.toString() : "?")
+                + (instanceId != null ? " id=" + instanceId : "")
                 + " state=" + state; //TODO TBD whether to include service name: owner.getServiceName()
     }
 
@@ -498,7 +498,7 @@ public class ServiceInstance<C> extends AtomicReference<ServiceInstance.ServiceI
         }
         public MethodInfo getMethodInfo(String methName) {
             MethodInfo mi = sourceConfig.getMethodInfos().get(methName);
-            return mi != null? mi : sourceConfig.getDefaultMethodInfo();
+            return mi != null ? mi : sourceConfig.getDefaultMethodInfo();
         }
 
         @Override

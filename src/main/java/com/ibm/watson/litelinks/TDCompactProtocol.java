@@ -44,7 +44,7 @@ public class TDCompactProtocol extends TCompactProtocol {
     }
 
     //  public static final TProtocolFactory FACTORY = new TCompactProtocol.Factory();
-    public static final TProtocolFactory FACTORY = tr -> tr instanceof NettyTTransport?
+    public static final TProtocolFactory FACTORY = tr -> tr instanceof NettyTTransport ?
             new TDCompactProtocol(tr) : new SafeBinaryTProtocol(new TCompactProtocol(tr));
 
     public TDCompactProtocol(TTransport trans) {

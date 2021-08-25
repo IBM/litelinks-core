@@ -90,7 +90,7 @@ public class ZookeeperWatchedService extends WatchedService {
                         pen.close();
                         this.pen = null;
                         logger.info("service ephemeral znode closed");
-                        int lastseg = path != null? path.lastIndexOf('/') : -1;
+                        int lastseg = path != null ? path.lastIndexOf('/') : -1;
                         if (lastseg >= 0) {
                             try {
                                 // try to clean up service node, will fail if other instances
@@ -165,13 +165,13 @@ public class ZookeeperWatchedService extends WatchedService {
         final String privateEndpoint = getPrivateEndpointString();
 
         logger.info("registering service with zookeeper: " + servicePath + ", endpoint " + serviceLocation
-                    + ", private endpoint " + (privateEndpoint != null? privateEndpoint : "none")
-                    + ", version " + (version != null? version : "not specified"));
+                    + ", private endpoint " + (privateEndpoint != null ? privateEndpoint : "none")
+                    + ", version " + (version != null ? version : "not specified"));
 
         // now setup service znode and set config / verify config consistency
         Stat stat = null;
         final ConfiguredService cservice = getConfiguredService();
-        final byte[] config = cservice != null? serializeConfig(cservice.getConfig()) : EMPTY;
+        final byte[] config = cservice != null ? serializeConfig(cservice.getConfig()) : EMPTY;
         if (config != EMPTY) {
             /*
              * The following logic is for backwards compatibility with older versions of litelinks (< v1.0.0).
@@ -216,18 +216,18 @@ public class ZookeeperWatchedService extends WatchedService {
         }
 
         byte[] headerData = serviceLocation.getBytes(StandardCharsets.ISO_8859_1);
-        byte[] iidData = instanceId == null? EMPTY  // instanceId should never be null
+        byte[] iidData = instanceId == null ? EMPTY  // instanceId should never be null
                 : (INSTANCE_ID + "=" + instanceId + "\n").getBytes(StandardCharsets.ISO_8859_1);
-        byte[] versData = version == null? EMPTY
+        byte[] versData = version == null ? EMPTY
                 : (SERVICE_VERSION + "=" + version + "\n").getBytes(StandardCharsets.ISO_8859_1);
-        byte[] privEndpointData = privateEndpoint == null? EMPTY
+        byte[] privEndpointData = privateEndpoint == null ? EMPTY
                 : (ThriftConnProp.PRIVATE_ENDPOINT + "=" + privateEndpoint + "\n").getBytes(StandardCharsets.ISO_8859_1);
         byte[] instanceData = Bytes.concat(headerData, DELIM_BYTES, iidData, versData, privEndpointData, config);
 
         logger.info("creating service ephemeral znode...");
         // with "protection" on, the node names will end up looking like: "_c_6aa0c8be-ff7b-4171-9cff-a2dfbde6e0d4-i-0000000000"
         pen = new PersistentNode(curator, CreateMode.EPHEMERAL_SEQUENTIAL, USE_PROTECTION,
-                servicePath + (USE_PROTECTION? "/i-" : "/instance-"), instanceData);
+                servicePath + (USE_PROTECTION ? "/i-" : "/instance-"), instanceData);
         pen.start();
 
         final Stat fstat = stat;

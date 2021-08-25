@@ -75,7 +75,7 @@ class ProbeHttpServer implements Closeable {
 
     public void setReady(boolean ready) {
         if (this.ready.compareAndSet(!ready, ready)) {
-            logger.info("HTTP health probe state changed to " + (ready? "READY" : "NOT READY"));
+            logger.info("HTTP health probe state changed to " + (ready ? "READY" : "NOT READY"));
         }
     }
 

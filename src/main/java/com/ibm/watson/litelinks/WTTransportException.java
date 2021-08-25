@@ -109,11 +109,11 @@ public class WTTransportException extends TTransportException {
     @Override
     public String getMessage() {
         String m = super.getMessage(), ts = getTypeString();
-        return m != null? m + " (" + ts + ")" : ts;
+        return m != null ? m + " (" + ts + ")" : ts;
     }
 
     public String getTypeString() {
         int t = type_;
-        return typeStrings[t > 0 && t < typeStrings.length? t : 0];
+        return typeStrings[t > 0 && t < typeStrings.length ? t : 0];
     }
 }

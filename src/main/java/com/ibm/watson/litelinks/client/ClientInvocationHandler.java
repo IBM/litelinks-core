@@ -144,7 +144,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
             for (int i = 0; i < MAX_REINITS; i++) {
                 try {
                     if (TEST_CONN_METH.equals(methodName)) {
-                        long cmdTimeout = args != null && args.length > 0? (Long) args[0] : tcb.timeoutMillis;
+                        long cmdTimeout = args != null && args.length > 0 ? (Long) args[0] : tcb.timeoutMillis;
                         return invokeWithRetries(null, TEST_CONN_METH, null, cmdTimeout, null);
                     }
                     if (GET_SII_METH.equals(methodName)) {
@@ -152,7 +152,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
                     }
                     // this intercepts both isAvailable() and awaitAvailable() methods
                     return /*(Boolean)*/ clientPool
-                            .awaitAvailable(args != null && args.length > 0? (Long) args[0] : 0L);
+                            .awaitAvailable(args != null && args.length > 0 ? (Long) args[0] : 0L);
                 } catch (ClientClosedException cce) {
                     handleClientClosed(i >= MAX_REINITS - 1, cce);
                 }
@@ -170,7 +170,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
         }
 
         final MethodConfig mc = (MethodConfig) tcb.methodConfig.get(methodName);
-        final int cmdTimeout = mc != null && mc.timeout >= 0? mc.timeout : tcb.timeoutMillis;
+        final int cmdTimeout = mc != null && mc.timeout >= 0 ? mc.timeout : tcb.timeoutMillis;
 
         if (tcb.clientAsyncInterface != null && tcb.clientAsyncInterface.isAssignableFrom(decClass)) {
             invokeAsync(methodName, args, extraContext, cmdTimeout, mc);
@@ -199,9 +199,9 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
             Map<String, String> extraContext, long cmdTimeout, MethodConfig mc) {
         int len = args.length;
         final AsyncMethodCallback<Object> callback = (AsyncMethodCallback<Object>) args[len - 1];
-        final Object[] syncArgs = len <= 1? NO_ARGS : Arrays.copyOf(args, len - 1);
+        final Object[] syncArgs = len <= 1 ? NO_ARGS : Arrays.copyOf(args, len - 1);
         final Map<String, String> cxt = getThreadContextForAsync(defaultContext, extraContext);
-        final Map<String, String> mdc = clientPool.sendMDC? MDC.getCopyOfContextMap() : null;
+        final Map<String, String> mdc = clientPool.sendMDC ? MDC.getCopyOfContextMap() : null;
         final long deadlineTimeout = ThreadContext.nanosUntilDeadline();
         asyncExecutor().execute(() -> {
             if (mdc != null) {
@@ -228,7 +228,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
                     doCallback(methodName, callback, response, err);
                 } else {
                     boolean ok = false;
-                    final AutoCloseable toRelease = !POOLED_BUFS? null
+                    final AutoCloseable toRelease = !POOLED_BUFS ? null
                             : ReleaseAfterResponse.takeOwnership();
                     try {
                         final Object finalResponse = response;
@@ -329,7 +329,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
             Map<String, String> extraContext) {
         Map<String, String> currContext = ThreadContext.getCurrentContext();
         if (defaultContext == null && extraContext == null) {
-            return currContext == null? currContext : ImmutableMap.copyOf(currContext);
+            return currContext == null ? currContext : ImmutableMap.copyOf(currContext);
         } else {
             return mergedThreadContext(currContext, defaultContext, extraContext);
         }
@@ -523,7 +523,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
                     return fee;
                 }
                 @Override public Cause getCause() {
-                    return reason != null? reason : mapExceptionToCause(fee);
+                    return reason != null ? reason : mapExceptionToCause(fee);
                 }
             });
         }
@@ -563,11 +563,11 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
             throw new TimeoutException();
         }
         long deadline = nanoTime() + timeoutNanos;
-        return deadline == 0L? 1L : deadline;
+        return deadline == 0L ? 1L : deadline;
     }
 
     private static int sz(Map<?, ?> c) {
-        return c == null? 0 : c.size();
+        return c == null ? 0 : c.size();
     }
 
     static Executor asyncExecutor() {
@@ -597,14 +597,14 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
         if (t instanceof TException) {
             throw (TException) t;
         }
-        throw t instanceof RuntimeException? (RuntimeException) t : new RuntimeException(t);
+        throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
     }
 
     static TException throwRuntimeExceptionOrTException(Throwable t) throws TException {
         if (t instanceof RuntimeException) {
             throw (RuntimeException) t;
         }
-        throw t instanceof TException? (TException) t : new TException(t);
+        throw t instanceof TException ? (TException) t : new TException(t);
     }
 
     static void closeQuietly(AutoCloseable closeable) {
@@ -634,7 +634,7 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
     private static Cause mapExceptionToCause(Throwable t) {
         if (t instanceof TException) {
             if (t instanceof TTransportException)
-                return ((TTransportException) t).getType() == TTransportException.TIMED_OUT?
+                return ((TTransportException) t).getType() == TTransportException.TIMED_OUT ?
                         Cause.TIMEOUT : Cause.CONN_FAILURE;
             if (t instanceof TProtocolException) return Cause.CONN_FAILURE;
             return Cause.APP_EXCEPTION; // includes TApplicationException
@@ -643,6 +643,6 @@ final class ClientInvocationHandler<C extends TServiceClient> implements Invocat
         if (t instanceof TimeoutException) return Cause.TIMEOUT;
         if (t instanceof SocketException) return Cause.CONN_FAILURE;
         if (t instanceof TooManyConnectionsException) return Cause.TOO_MANY_CONNS;
-        return t != null? Cause.LOCAL_FAILURE : Cause.UNKNOWN; //TBD
+        return t != null ? Cause.LOCAL_FAILURE : Cause.UNKNOWN; //TBD
     }
 }

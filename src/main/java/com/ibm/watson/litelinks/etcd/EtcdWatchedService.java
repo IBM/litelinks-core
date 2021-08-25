@@ -137,11 +137,11 @@ public class EtcdWatchedService extends WatchedService {
 
         logger.info("registering service in etcd: " + serviceKey.toStringUtf8() + ", endpoint "
                     + serviceHost + ":" + port + ", private endpoint "
-                    + (privateEndpoint != null? privateEndpoint : "none")
-                    + ", version " + (version != null? version : "not specified"));
+                    + (privateEndpoint != null ? privateEndpoint : "none")
+                    + ", version " + (version != null ? version : "not specified"));
 
         final ConfiguredService cservice = getConfiguredService();
-        Map<String, String> config = cservice != null? cservice.getConfig() : null;
+        Map<String, String> config = cservice != null ? cservice.getConfig() : null;
         if (config == null) {
             config = Collections.emptyMap();
         }

@@ -41,10 +41,10 @@ public class SettableThriftServiceImpl extends ThriftService { //implements Ifac
 
     static {
         String ipause = System.getenv("svcinitpause");
-        initPause = ipause != null? Long.parseLong(ipause) : 0l;
+        initPause = ipause != null ? Long.parseLong(ipause) : 0l;
 
         String spause = System.getenv("svcshutdownpause");
-        shutdownPause = spause != null? Long.parseLong(spause) : 0l;
+        shutdownPause = spause != null ? Long.parseLong(spause) : 0l;
     }
 
     private final long ipause, spause;

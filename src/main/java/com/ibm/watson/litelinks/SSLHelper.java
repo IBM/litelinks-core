@@ -78,9 +78,9 @@ public class SSLHelper {
     static {
         String useJdkVal = System.getProperty(LitelinksSystemPropNames.USE_JDK_TLS);
         USE_OPEN_SSL = "true".equalsIgnoreCase(useJdkVal) || !OpenSsl.supportsKeyManagerFactory()
-                ? Boolean.FALSE : useJdkVal != null? Boolean.TRUE : null;
+                ? Boolean.FALSE : useJdkVal != null ? Boolean.TRUE : null;
         logger.info("Litelinks using OpenSSL for TLS: "
-                + (USE_OPEN_SSL != null? USE_OPEN_SSL : "when possible"));
+                + (USE_OPEN_SSL != null ? USE_OPEN_SSL : "when possible"));
     }
 
     static final String[] TLS_PROTOS = { "TLSv1", "TLSv1.1", "TLSv1.2" };
@@ -209,21 +209,21 @@ public class SSLHelper {
             slp.trustManagerAlg = props.getProperty(PARAM_TRUSTMGRALG,
                     TrustManagerFactory.getDefaultAlgorithm());
             String cs = props.getProperty(PARAM_CIPHERS);
-            slp.cipherSuites = cs != null? cs.split(",") : null;
+            slp.cipherSuites = cs != null ? cs.split(",") : null;
 
             String path = props.getProperty(PARAM_TRUSTPATH);
             if (path != null) {
                 String pass = props.getProperty(PARAM_TRUSTPASS);
                 String type = props.getProperty(PARAM_TRUSTTYPE, DEFAULT_STORE_TYPE);
                 slp.trustStore = new KeyStoreInfo(new File(path),
-                        pass != null? pass.toCharArray() : null, type);
+                        pass != null ? pass.toCharArray() : null, type);
             }
             path = props.getProperty(PARAM_KEYPATH);
             if (path != null) {
                 String pass = props.getProperty(PARAM_KEYPASS);
                 String type = props.getProperty(PARAM_KEYTYPE, DEFAULT_STORE_TYPE);
                 slp.keyStore = new KeyStoreInfo(new File(path),
-                        pass != null? pass.toCharArray() : null, type);
+                        pass != null ? pass.toCharArray() : null, type);
             }
             path = props.getProperty(PARAM_PKEY_PATH);
             if (path != null) {
@@ -282,7 +282,7 @@ public class SSLHelper {
     public static SslContext getSslContext(String protocolOverride, boolean server, boolean reqClientAuth)
             throws IOException, GeneralSecurityException {
         SSLParams params = SSLParams.getDefault();
-        String protocol = protocolOverride != null? protocolOverride : params.protocol;
+        String protocol = protocolOverride != null ? protocolOverride : params.protocol;
         reqClientAuth = server && (reqClientAuth || params.clientAuth);
         return getSslContext(protocol, params.keyStore, params.trustStore,
                 params.keyManagerAlg, params.trustManagerAlg, server, reqClientAuth,
@@ -324,7 +324,7 @@ public class SSLHelper {
             KeyStore keyStore = loadKeyStore(keyStoreInfo);
             kmf = getKeyManagerFactory(keyStore, keyStoreInfo.getPassword(), keyMgrAlg);
             if (useOpenSsl == null && containsDsaCert(keyStore)) {
-                logger.info("Disabling litelinks " + (server? "server" : "client")
+                logger.info("Disabling litelinks " + (server ? "server" : "client")
                         + " use of OpenSSL for TLS due to keystore containing DSA cert: "
                         + keyStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
@@ -333,7 +333,7 @@ public class SSLHelper {
 
         SslContextBuilder scb;
         if (server) {
-            scb = kmf != null? SslContextBuilder.forServer(kmf)
+            scb = kmf != null ? SslContextBuilder.forServer(kmf)
                     : SslContextBuilder.forServer(keyCertFile, keyFile, keyPassword);
             if (reqClientAuth) {
                 scb.clientAuth(ClientAuth.REQUIRE);
@@ -350,7 +350,7 @@ public class SSLHelper {
         if (trustStoreInfo != null) {
             trustStore = loadKeyStore(trustStoreInfo);
             if (useOpenSsl == null && containsDsaCert(trustStore)) {
-                logger.info("Disabling litelinks " + (server? "server" : "client")
+                logger.info("Disabling litelinks " + (server ? "server" : "client")
                         + " use of OpenSSL for TLS due to truststore containing DSA cert: "
                         + trustStoreInfo.getFile());
                 useOpenSsl = Boolean.FALSE;
@@ -362,15 +362,15 @@ public class SSLHelper {
         boolean openSsl = useOpenSsl == null || useOpenSsl;
         scb.ciphers(getDefaultCiphers(server, openSsl));
         if (protocol != null) {
-            scb.protocols("TLS".equals(protocol)? TLS_PROTOS : new String[] { protocol });
+            scb.protocols("TLS".equals(protocol) ? TLS_PROTOS : new String[] { protocol });
         }
-        return scb.sslProvider(openSsl? SslProvider.OPENSSL : SslProvider.JDK).build();
+        return scb.sslProvider(openSsl ? SslProvider.OPENSSL : SslProvider.JDK).build();
     }
 
     private static List<String> getDefaultCiphers(boolean server, boolean openSsl) {
-        String[] ciphers = !server? ((SSLSocketFactory) SSLSocketFactory.getDefault()).getDefaultCipherSuites()
+        String[] ciphers = !server ? ((SSLSocketFactory) SSLSocketFactory.getDefault()).getDefaultCipherSuites()
                 : ((SSLServerSocketFactory) SSLServerSocketFactory.getDefault()).getDefaultCipherSuites();
-        return !openSsl? Arrays.asList(ciphers)
+        return !openSsl ? Arrays.asList(ciphers)
                 : Arrays.stream(ciphers).filter(OpenSsl::isCipherSuiteAvailable).collect(Collectors.toList());
     }
 
@@ -391,7 +391,7 @@ public class SSLHelper {
         }
         // trust certs file or dir but no truststore
         if (trustCertsFile != null && trustStore == null) {
-            return !trustCertsFile.isDirectory()? scb.trustManager(trustCertsFile)
+            return !trustCertsFile.isDirectory() ? scb.trustManager(trustCertsFile)
                     : scb.trustManager(generateCertificates(trustCertsFile).toArray(new X509Certificate[0]));
         }
         // all other cases
@@ -476,9 +476,9 @@ public class SSLHelper {
         @Override
         public int hashCode() {
             final int prime = 31;
-            int result = prime + (file == null? 0 : file.hashCode());
+            int result = prime + (file == null ? 0 : file.hashCode());
             result = prime * result + Arrays.hashCode(password);
-            return prime * result + (type == null? 0 : type.hashCode());
+            return prime * result + (type == null ? 0 : type.hashCode());
         }
 
         @Override

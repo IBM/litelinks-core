@@ -82,12 +82,12 @@ public final class ThreadContext {
      * Get the current thread's context map
      */
     public static Map<String, String> getCurrentContext() {
-        return inUse? context.get().contextMap : null;
+        return inUse ? context.get().contextMap : null;
     }
 
     public static String getContextEntry(String key) {
         Map<String, String> curMap = getCurrentContext();
-        return curMap == null? null : curMap.get(key);
+        return curMap == null ? null : curMap.get(key);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class ThreadContext {
             return -1L;
         }
         d = BASE_NANOS + d - nanoTime();
-        return d >= 0 ? d : (d < Long.MIN_VALUE / 2? Long.MAX_VALUE : 0L);
+        return d >= 0 ? d : (d < Long.MIN_VALUE / 2 ? Long.MAX_VALUE : 0L);
     }
 
     public static boolean isDeadlineExpired() {
@@ -123,7 +123,7 @@ public final class ThreadContext {
 
     /**
      * @param map
-     * @param nanosUntilDeadline -1 for no deadline, or otherwise >= 0
+     * @param nanosUntilDeadline -1 for no deadline, or otherwise &gt;= 0
      */
     public static void setCurrentContext(Map<String, String> map,
             long nanosUntilDeadline) {
@@ -132,7 +132,7 @@ public final class ThreadContext {
     }
 
     /**
-     * @param nanos -1 to unset deadline, or otherwise >= 0
+     * @param nanos -1 to unset deadline, or otherwise &gt;= 0
      */
     public static void setDeadlineAfter(long nanos) {
         context.get().thisSetDeadlineAfter(nanos);
@@ -166,7 +166,7 @@ public final class ThreadContext {
     }
 
     private void thisSetDeadlineAfter(long nanos) {
-        deadlineNanos = nanos == -1L? -1L
+        deadlineNanos = nanos == -1L ? -1L
                 : nanoTime() + Math.max(0L, nanos) - BASE_NANOS;
     }
 
