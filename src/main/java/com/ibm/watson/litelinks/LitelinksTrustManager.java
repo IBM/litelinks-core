@@ -18,6 +18,7 @@ package com.ibm.watson.litelinks;
 import java.net.Socket;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.net.ssl.SSLEngine;
@@ -36,21 +37,18 @@ import io.netty.util.internal.EmptyArrays;
  *
  */
 public class LitelinksTrustManager extends X509ExtendedTrustManager {
-    private final X509ExtendedTrustManager delegate;
-    private boolean sendCertRequest;
+    private final X509TrustManager delegate;
+    private final X509ExtendedTrustManager extDelegate; // may be null
+    private final boolean sendCertRequest;
 
     public LitelinksTrustManager(X509TrustManager delegate) {
-        this.delegate = (X509ExtendedTrustManager) delegate;
-        if (delegate.getAcceptedIssuers() != null) {
-            for (X509Certificate c : delegate.getAcceptedIssuers()) {
-                int basicConstraints = c.getBasicConstraints();
-                if (!Objects.equals(c.getIssuerX500Principal(), c.getSubjectX500Principal())
-                        && basicConstraints == -1) {
-                    sendCertRequest = false;
-                    break;
-                }
-            }
-        }
+        this.delegate = delegate;
+        this.extDelegate = delegate instanceof X509ExtendedTrustManager ?
+                (X509ExtendedTrustManager) delegate : null;
+        X509Certificate[] certs = delegate.getAcceptedIssuers();
+        this.sendCertRequest = certs == null || Arrays.stream(certs)
+                .allMatch(c -> c.getBasicConstraints() != -1 ||
+                        Objects.equals(c.getIssuerX500Principal(), c.getSubjectX500Principal()));
     }
 
     @Override
@@ -72,24 +70,40 @@ public class LitelinksTrustManager extends X509ExtendedTrustManager {
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket)
             throws CertificateException {
-        delegate.checkClientTrusted(chain, authType, socket);
+        if (extDelegate != null) {
+            extDelegate.checkClientTrusted(chain, authType, socket);
+        } else {
+            delegate.checkClientTrusted(chain, authType);
+        }
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket)
             throws CertificateException {
-        delegate.checkServerTrusted(chain, authType, socket);
+        if (extDelegate != null) {
+            extDelegate.checkServerTrusted(chain, authType, socket);
+        } else {
+            delegate.checkServerTrusted(chain, authType);
+        }
     }
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
             throws CertificateException {
-        delegate.checkClientTrusted(chain, authType, engine);
+        if (extDelegate != null) {
+            extDelegate.checkClientTrusted(chain, authType, engine);
+        } else {
+            delegate.checkClientTrusted(chain, authType);
+        }
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
             throws CertificateException {
-        delegate.checkServerTrusted(chain, authType, engine);
+        if (extDelegate != null) {
+            extDelegate.checkServerTrusted(chain, authType, engine);
+        } else {
+            delegate.checkServerTrusted(chain, authType);
+        }
     }
 }

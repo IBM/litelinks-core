@@ -416,10 +416,8 @@ public class SSLHelper {
             // Wrap X.509 TrustManager in one which allows use of non-CA certs in client authentication
             for (TrustManager tm : tmf.getTrustManagers()) {
                 if (tm instanceof X509TrustManager) {
-
                     TrustManager newTm = new LitelinksTrustManager((X509TrustManager) tm);
                     tmf = new TrustManagerFactoryWrapper(newTm);
-
                     break;
                 }
             }
