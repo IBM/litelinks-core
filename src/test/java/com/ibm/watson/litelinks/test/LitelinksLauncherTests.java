@@ -136,7 +136,7 @@ public class LitelinksLauncherTests {
      */
     @Test
     public void external_launch_test() throws Exception {
-        String sname = "launched_test";
+        String sname = "ext_launched_test";
         DummyService.Iface client = ThriftClientBuilder.newBuilder(DummyService.Client.class)
                 .withZookeeper(ZK).withServiceName(sname).withTimeout(5000).build();
         runTest(client, true, null, "-z", ZK, "-n", sname);
@@ -231,7 +231,7 @@ public class LitelinksLauncherTests {
             for (int i = 0; i < serverEvs.length; i += 2) {
                 envVarMap.put("LITELINKS_SSL_" + serverEvs[i], serverEvs[i + 1]);
             }
-            String sname = "launched_test";
+            String sname = "launched_test_" + Long.toHexString(ThreadLocalRandom.current().nextLong());
             DummyService.Iface client = ThriftClientBuilder.newBuilder(DummyService.Client.class)
                     .withZookeeper(ZK).withServiceName(sname).withTimeout(5000).build();
             try (LitelinksServiceClient lsClient = (LitelinksServiceClient) client) {
@@ -319,7 +319,7 @@ public class LitelinksLauncherTests {
      */
     @Test
     public void service_version_test() throws Exception {
-        String sname = "launched_test";
+        String sname = "launched_sv_test";
         final String serviceVersion = "version-5";
         DummyService.Iface client = ThriftClientBuilder.newBuilder(DummyService.Client.class)
                 .withZookeeper(ZK).withServiceName(sname).withTimeout(5000).build();
