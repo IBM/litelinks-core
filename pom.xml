@@ -50,8 +50,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <netty-version>4.1.67.Final</netty-version>
-    <netty-tcnative-version>2.0.40.Final</netty-tcnative-version>
+    <netty-version>4.1.72.Final</netty-version>
   </properties>
 
   <build>
@@ -85,8 +84,8 @@
             <!-- required for LitelinksTests.client_close_test() -->
             <litelinks.delay_client_close>false</litelinks.delay_client_close>
           </systemPropertyVariables>
-          <!-- required to workaround issue with openjdk 8u181-b13-2 -->
-          <useSystemClassLoader>false</useSystemClassLoader>
+          <reuseForks>false</reuseForks>
+          <forkCount>2</forkCount>
         </configuration>
       </plugin>
       <plugin>
@@ -144,11 +143,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-tcnative-boringssl-static</artifactId>
-        <version>${netty-tcnative-version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -183,7 +177,7 @@
     <dependency>
       <groupId>org.apache.thrift</groupId>
       <artifactId>libthrift</artifactId>
-      <version>0.14.2</version>
+      <version>0.15.0</version>
       <scope>compile</scope>
       <exclusions>
         <!-- these are actually optional -->
@@ -289,7 +283,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>30.1.1-jre</version>
+      <version>31.0.1-jre</version>
       <scope>compile</scope>
     </dependency>
 
@@ -319,13 +313,13 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.14.1</version>
+      <version>2.15.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.14.1</version>
+      <version>2.15.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -336,7 +330,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-annotations-api</artifactId>
-      <version>9.0.52</version>
+      <version>9.0.56</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
