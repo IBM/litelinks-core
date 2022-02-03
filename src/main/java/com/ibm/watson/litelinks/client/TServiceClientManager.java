@@ -295,6 +295,9 @@ public class TServiceClientManager<C extends TServiceClient>
             if (si == ServiceInstanceCache.ALL_FAILING) {
                 throw new ServiceUnavailableException("all instances are failing: " + serviceName);
             }
+            if (si == ServiceInstanceCache.ABORT_REQUEST) {
+                throw new ServiceUnavailableException("request aborted by load balancer");
+            }
             try {
                 pc = si.borrowClient();
             } catch (IllegalStateException ise) {

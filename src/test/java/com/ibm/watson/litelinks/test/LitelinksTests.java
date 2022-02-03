@@ -1684,19 +1684,16 @@ public class LitelinksTests {
                     assertEquals(2, (int) lbClient.method_two(33, "", null).getDoubleField());
                 }
 
+                ServiceInstanceInfo[] returnFromLb = new ServiceInstanceInfo[] { null }; // reject all
+
                 // test "non-inclusive" loadbalancer function
                 final DummyService.Iface ilbClient = ThriftClientBuilder.newBuilder(DummyService.Client.class)
                         .withServiceName("svccluster").withZookeeper(ZK).withTimeout(3500)
-                        .withLoadBalancer(new LoadBalancingPolicy() {
+                        .withLoadBalancer(() -> new CustomLoadBalancer() {
                             @Override
-                            public LoadBalancer getLoadBalancer() {
-                                return new CustomLoadBalancer() {
-                                    @Override
-                                    public ServiceInstanceInfo getNext(List<ServiceInstanceInfo> list,
-                                            String method, Object[] args) {
-                                        return null; // reject all
-                                    }
-                                };
+                            public ServiceInstanceInfo getNext(List<ServiceInstanceInfo> list,
+                                    String method, Object[] args) {
+                                return returnFromLb[0]; // reject all
                             }
                         }).buildOnceAvailable(3000l);
 
@@ -1706,6 +1703,19 @@ public class LitelinksTests {
                     fail("should throw SUE");
                 } catch (TException te) {
                     assertTrue(te.getCause() instanceof ServiceUnavailableException);
+                    assertFalse(te.getCause().getMessage().startsWith("request aborted by load balancer"));
+                }
+
+                returnFromLb[0] = LoadBalancer.ABORT_REQUEST; // reject all and don't fall back
+
+                // test "non-inclusive" loadbalancer function using LoadBalancer.NONE_AND_DONT_FALLBACK constant
+                // should throw SUE despite cluster containing instances
+                try {
+                    ilbClient.method_two(33, "", null);
+                    fail("should throw SUE");
+                } catch (TException te) {
+                    assertTrue(te.getCause() instanceof ServiceUnavailableException);
+                    assertTrue(te.getCause().getMessage().startsWith("request aborted by load balancer"));
                 }
 
                 ((LitelinksServiceClient) lbClient).close();
