@@ -50,14 +50,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <netty-version>4.1.72.Final</netty-version>
+    <netty-version>4.1.73.Final</netty-version>
   </properties>
 
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.9.0</version>
         <configuration>
           <release>8</release>
           <testRelease>11</testRelease>
@@ -91,7 +91,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.1</version>
         <configuration>
           <doclint>none</doclint>
         </configuration>
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>com.ibm.etcd</groupId>
       <artifactId>etcd-java</artifactId>
-      <version>0.0.18</version>
+      <version>0.0.19</version>
       <scope>compile</scope>
       <!-- <optional>true</optional> -->
       <exclusions>
@@ -330,7 +330,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-annotations-api</artifactId>
-      <version>9.0.56</version>
+      <version>9.0.58</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -359,7 +359,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
+            <version>3.0.1</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
