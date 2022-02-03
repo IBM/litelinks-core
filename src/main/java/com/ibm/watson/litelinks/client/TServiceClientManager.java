@@ -66,6 +66,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -297,11 +298,13 @@ public class TServiceClientManager<C extends TServiceClient>
                 pc = si.borrowClient();
             } catch (IllegalStateException ise) {
                 continue; // service inactive
-            } catch (TTransportException | SocketException te) {
+            } catch (TTransportException | SocketException | NoSuchElementException te) {
+                // NoSuchElementException is thrown if the pool's validation of the
+                // connection fails, which means that the connection's transport is not open.
                 if (seen == null) {
                     seen = new HashSet<>();
                 }
-                // don't try the same SI more than once
+                // don't try the same SI more than twice
                 // (won't happen before activeList has been exhausted)
                 if (!seen.add(si)) {
                     throw te;
