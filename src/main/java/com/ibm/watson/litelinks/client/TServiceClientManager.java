@@ -56,8 +56,10 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InterruptedIOException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -298,9 +300,9 @@ public class TServiceClientManager<C extends TServiceClient>
                 pc = si.borrowClient();
             } catch (IllegalStateException ise) {
                 continue; // service inactive
-            } catch (TTransportException | SocketException | NoSuchElementException te) {
-                // NoSuchElementException is thrown if the pool's validation of the
-                // connection fails, which means that the connection's transport is not open.
+            } catch (InterruptedException | InterruptedIOException | InterruptedByTimeoutException ie) {
+                throw ie;
+            } catch (Exception te) { // Typically TTransportException, SocketException or NoSuchElementException
                 if (seen == null) {
                     seen = new HashSet<>();
                 }
