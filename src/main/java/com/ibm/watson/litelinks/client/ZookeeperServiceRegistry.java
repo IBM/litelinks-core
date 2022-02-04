@@ -19,7 +19,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.ibm.watson.litelinks.ThreadPoolHelper;
-import com.ibm.watson.litelinks.ThriftConnProp;
+import com.ibm.watson.litelinks.ServiceProperties;
 import com.ibm.watson.litelinks.server.ZookeeperWatchedService;
 import com.ibm.watson.zk.ZookeeperClient;
 import org.apache.curator.framework.CuratorFramework;
@@ -189,7 +189,7 @@ public class ZookeeperServiceRegistry implements ServiceRegistryClient {
                     currentConfigMxid = newStat.getMzxid();
                     if (logger.isDebugEnabled()) {
                         logger.debug("New client config from ZK for service " + serviceName + ":");
-                        ThriftConnProp.log(logger, props);
+                        ServiceProperties.log(logger, props);
                     }
                 }
                 if (!childCacheStarted) {

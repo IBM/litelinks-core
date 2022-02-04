@@ -17,7 +17,7 @@ package com.ibm.watson.litelinks.server;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.util.concurrent.Service;
-import com.ibm.watson.litelinks.ThriftConnProp;
+import com.ibm.watson.litelinks.ServiceProperties;
 import com.ibm.watson.litelinks.server.ConfiguredService.ConfigMismatchException;
 import com.ibm.watson.zk.ZookeeperClient;
 import org.apache.curator.framework.CuratorFramework;
@@ -221,7 +221,7 @@ public class ZookeeperWatchedService extends WatchedService {
         byte[] versData = version == null ? EMPTY
                 : (SERVICE_VERSION + "=" + version + "\n").getBytes(StandardCharsets.ISO_8859_1);
         byte[] privEndpointData = privateEndpoint == null ? EMPTY
-                : (ThriftConnProp.PRIVATE_ENDPOINT + "=" + privateEndpoint + "\n").getBytes(StandardCharsets.ISO_8859_1);
+                : (ServiceProperties.PRIVATE_ENDPOINT + "=" + privateEndpoint + "\n").getBytes(StandardCharsets.ISO_8859_1);
         byte[] instanceData = Bytes.concat(headerData, DELIM_BYTES, iidData, versData, privEndpointData, config);
 
         logger.info("creating service ephemeral znode...");

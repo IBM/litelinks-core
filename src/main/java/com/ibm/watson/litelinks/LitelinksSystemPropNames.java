@@ -260,4 +260,11 @@ public /*final*/ class LitelinksSystemPropNames {
      * returns.
      */
     public static final String POOLED_BYTEBUFFERS = "litelinks.produce_pooled_bytebufs";
+
+    /**
+     * Can be used to declare aliases of service class names, to use when validating
+     * that the server interface is compatible by clients and other servers joining a cluster.
+     * Should be of the form "f.q.ClassNameA=f.q.ClassNameB,f.q.ClassNameC=f.q.ClassNameD,...".
+     */
+    public static final String SERVICE_CLASS_ALIASES = "litelinks.svc_class_aliases";
 }

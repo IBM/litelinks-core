@@ -17,7 +17,7 @@ package com.ibm.watson.litelinks.client;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.ibm.watson.litelinks.ThriftConnProp;
+import com.ibm.watson.litelinks.ServiceProperties;
 import org.apache.thrift.protocol.TProtocolFactory;
 
 import java.util.HashMap;
@@ -115,17 +115,17 @@ public class StaticServiceRegistry implements ServiceRegistryClient {
             public void start(long timeoutMillis) throws Exception {
                 Map<Object, Object> props = new HashMap<>();
                 if (protoFactory != null) {
-                    props.put(ThriftConnProp.TR_PROTO_FACTORY,
+                    props.put(ServiceProperties.TR_PROTO_FACTORY,
                             protoFactory.getName());
                 }
                 if (ssl != null) {
-                    props.put(ThriftConnProp.TR_SSL, ssl.toString());
+                    props.put(ServiceProperties.TR_SSL, ssl.toString());
                 }
                 if (framed != null) {
-                    props.put(ThriftConnProp.TR_FRAMED, framed.toString());
+                    props.put(ServiceProperties.TR_FRAMED, framed.toString());
                 }
                 if (extraInfo != null) {
-                    props.put(ThriftConnProp.TR_EXTRA_INFO, extraInfo.toString());
+                    props.put(ServiceProperties.TR_EXTRA_INFO, extraInfo.toString());
                 }
                 String id = hostname + ":" + port + "/" + serviceName;
                 getListener().serverAdded(hostname, port, System.currentTimeMillis(),

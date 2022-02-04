@@ -50,6 +50,7 @@ import com.ibm.watson.litelinks.server.ReleaseAfterResponse;
 import com.ibm.watson.litelinks.test.thrift.DummyEnum;
 import com.ibm.watson.litelinks.test.thrift.DummyService;
 import com.ibm.watson.litelinks.test.thrift.DummyService2;
+import com.ibm.watson.litelinks.test.thrift.DummyServiceAlias;
 import com.ibm.watson.litelinks.test.thrift.DummyStruct;
 import com.ibm.watson.litelinks.test.thrift.InstanceFailingException;
 import com.ibm.watson.litelinks.test.thrift.TestException;
@@ -124,6 +125,9 @@ public class LitelinksTests {
     static {
         System.setProperty("litelinks.threadcontexts", "custom,log4j_mdc");
         System.setProperty("litelinks.delay_client_close", "false");
+        // For service_class_alias_test
+        System.setProperty("litelinks.svc_class_aliases",
+                "com.ibm.watson.litelinks.test.thrift.DummyServiceAlias=com.ibm.watson.litelinks.test.thrift.DummyService");
 
         //System.setProperty("litelinks.serialize_async_callbacks", "true");
     }
@@ -1491,6 +1495,46 @@ public class LitelinksTests {
 
         } finally {
             stopAll(svc, svc2);
+        }
+    }
+
+    // Clone of DummyService with different service class name
+    public static class AliasServiceImpl implements DummyServiceAlias.Iface {
+        public AliasServiceImpl() {}
+        @Override public String method_one(String arg1, DummyStruct arg2, boolean arg3) throws TException {
+            return defaultImpl.method_one(arg1, arg2, arg3);
+        }
+        @Override public DummyStruct method_two(int arg1, String arg2, ByteBuffer arg3) throws TException {
+            return defaultImpl.method_two(arg1, arg2, arg3);
+        }
+    }
+
+    @Test
+    public void service_class_alias_test() throws Exception {
+        // service class alias config from env var LL_SERVICE_CLASS_ALIASES:
+        // "com.ibm.watson.litelinks.test.thrift.DummyServiceAlias=com.ibm.watson.litelinks.test.thrift.DummyService"
+
+        // Create clone of DummyService with different service class name
+        Service aliasService = LitelinksService.createService(AliasServiceImpl.class, ZK, null).startAsync();
+        Service svc = null;
+        try {
+            aliasService.awaitRunning();
+
+            // Create and test a client with aliased service class
+            DummyService.Iface aliasClient = ThriftClientBuilder.<DummyService.Iface>newBuilder(DummyService.Client.class)
+                    .withZookeeper(ZK).withServiceName(DummyServiceAlias.class.getName())
+                    .buildOnceAvailable(5000l);
+            basic_test(aliasClient);
+
+            // try to start server instance with same svc name but different svc class
+            svc = LitelinksService.createService(TestThriftServiceImpl.class,
+                    ZK, DummyService.class.getName());
+            svc.startAsync().awaitRunning();
+        } finally {
+            aliasService.stopAsync();
+            if (svc != null) {
+                svc.stopAsync();
+            }
         }
     }
 
