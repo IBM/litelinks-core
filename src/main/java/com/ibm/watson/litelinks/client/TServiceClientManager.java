@@ -56,8 +56,10 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InterruptedIOException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -297,11 +299,13 @@ public class TServiceClientManager<C extends TServiceClient>
                 pc = si.borrowClient();
             } catch (IllegalStateException ise) {
                 continue; // service inactive
-            } catch (TTransportException | SocketException te) {
+            } catch (InterruptedException | InterruptedIOException | InterruptedByTimeoutException ie) {
+                throw ie;
+            } catch (Exception te) { // Typically TTransportException, SocketException or NoSuchElementException
                 if (seen == null) {
                     seen = new HashSet<>();
                 }
-                // don't try the same SI more than once
+                // don't try the same SI more than twice
                 // (won't happen before activeList has been exhausted)
                 if (!seen.add(si)) {
                     throw te;
