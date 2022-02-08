@@ -80,6 +80,7 @@ public final class ServiceInstanceCache<C> extends RegistryListener {
     // used as internal sentinel only
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static final ServiceInstance<?> ALL_FAILING = new ServiceInstance(null, null, null, null);
+    static final ServiceInstance<?> ABORT_REQUEST = new ServiceInstance(null, null, null, null);
 
     @SuppressWarnings("rawtypes")
     private static final ServiceInstance[] EMPTYLIST = new ServiceInstance[0];

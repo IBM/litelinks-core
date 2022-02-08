@@ -39,24 +39,9 @@ package com.ibm.watson.litelinks.client;
 @FunctionalInterface
 public interface LoadBalancingPolicy {
 
-    LoadBalancingPolicy RANDOM = new InclusiveLoadBalancingPolicy() {
-        @Override
-        public LoadBalancer getLoadBalancer() {
-            return LoadBalancer.RANDOM;
-        }
-    },
-            ROUND_ROBIN = new InclusiveLoadBalancingPolicy() {
-                @Override
-                public LoadBalancer getLoadBalancer() {
-                    return new LoadBalancer.RoundRobin();
-                }
-            },
-            BALANCED = new InclusiveLoadBalancingPolicy() {
-                @Override
-                public LoadBalancer getLoadBalancer() {
-                    return LoadBalancer.BALANCED;
-                }
-            };
+    LoadBalancingPolicy RANDOM = (InclusiveLoadBalancingPolicy) () -> LoadBalancer.RANDOM;
+    LoadBalancingPolicy ROUND_ROBIN = (InclusiveLoadBalancingPolicy) LoadBalancer.RoundRobin::new;
+    LoadBalancingPolicy BALANCED = (InclusiveLoadBalancingPolicy) () -> LoadBalancer.BALANCED;
 
     /**
      * @return a {@link LoadBalancer} instance corresponding to this policy
@@ -69,6 +54,5 @@ public interface LoadBalancingPolicy {
      * all by returning null
      */
     @FunctionalInterface
-    interface InclusiveLoadBalancingPolicy extends LoadBalancingPolicy {
-    }
+    interface InclusiveLoadBalancingPolicy extends LoadBalancingPolicy {}
 }

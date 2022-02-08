@@ -19,8 +19,7 @@ public class ServiceUnavailableException extends Exception {
 
     private static final long serialVersionUID = -2885920148780929688L;
 
-    public ServiceUnavailableException() {
-    }
+    public ServiceUnavailableException() {}
 
     public ServiceUnavailableException(String message) {
         super(message);

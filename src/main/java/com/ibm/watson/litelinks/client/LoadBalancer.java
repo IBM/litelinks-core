@@ -27,6 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("unchecked")
 public interface LoadBalancer {
 
+    /**
+     * Can be returned from the {@link #getNext(Object[], String, Object[])} method of
+     * {@link LoadBalancingPolicy.InclusiveLoadBalancingPolicy non-inclusive} load balancer
+     * implementations instead of {@code null}, to reject all provided service instances and
+     * further instruct that no fallback attempt should be made against any currently
+     * failing instances (if applicable).
+     */
+    LitelinksServiceClient.ServiceInstanceInfo ABORT_REQUEST = ServiceInstanceCache.ABORT_REQUEST;
+
     <T> T getNext(Object[] list, String method, Object[] args);
 
     LoadBalancer RANDOM = new LoadBalancer() {
