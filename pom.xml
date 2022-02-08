@@ -20,7 +20,7 @@
   <groupId>com.ibm.utils.litelinks</groupId>
   <artifactId>litelinks-core</artifactId>
   <name>litelinks-core</name>
-  <version>1.7.2-SNAPSHOT</version>
+  <version>1.7.2</version>
   <packaging>jar</packaging>
   <description>Service as a function allowing teams to quickly expose microserviceAPIs without needing to spend time
     worrying about how they are deployed, consumed, etc.</description>
