@@ -1514,21 +1514,22 @@ public class LitelinksTests {
         // service class alias config from env var LL_SERVICE_CLASS_ALIASES:
         // "com.ibm.watson.litelinks.test.thrift.DummyServiceAlias=com.ibm.watson.litelinks.test.thrift.DummyService"
 
+        final String serviceName = "alias-test";
+
         // Create clone of DummyService with different service class name
-        Service aliasService = LitelinksService.createService(AliasServiceImpl.class, ZK, null).startAsync();
+        Service aliasService = LitelinksService.createService(AliasServiceImpl.class, ZK, serviceName).startAsync();
         Service svc = null;
         try {
             aliasService.awaitRunning();
 
             // Create and test a client with aliased service class
             DummyService.Iface aliasClient = ThriftClientBuilder.<DummyService.Iface>newBuilder(DummyService.Client.class)
-                    .withZookeeper(ZK).withServiceName(DummyServiceAlias.class.getName())
+                    .withZookeeper(ZK).withServiceName(serviceName)
                     .buildOnceAvailable(5000l);
             basic_test(aliasClient);
 
             // try to start server instance with same svc name but different svc class
-            svc = LitelinksService.createService(TestThriftServiceImpl.class,
-                    ZK, DummyService.class.getName());
+            svc = LitelinksService.createService(TestThriftServiceImpl.class, ZK, serviceName);
             svc.startAsync().awaitRunning();
         } finally {
             aliasService.stopAsync();
