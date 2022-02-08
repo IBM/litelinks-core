@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.ibm.watson.litelinks.ThriftConnProp.*;
+import static com.ibm.watson.litelinks.ServiceProperties.*;
 import static com.ibm.watson.litelinks.server.AdapterThriftService.getIfaceFromSvcClass;
 
 public class DefaultThriftServer extends AbstractService
@@ -306,21 +306,30 @@ public class DefaultThriftServer extends AbstractService
         }
     }
 
+    private boolean verifyServiceClass(String otherScName) {
+        final Class<?> sc = tp.getClass().getDeclaringClass();
+        if (sc == null || otherScName.equals(sc.getName())) {
+            return true;
+        }
+        Class<?> serviceIface = getIfaceFromSvcClass(sc), otherIface = null;
+        if (serviceIface != null) {
+            try {
+                otherIface = getIfaceFromSvcClass(Class.forName(otherScName));
+            } catch (ClassNotFoundException cnfe) {}
+        }
+        return otherIface != null && otherIface.isAssignableFrom(serviceIface);
+    }
+
     @Override
     public void verifyConfig(Map<String, String> other) throws ConfigMismatchException {
         TProcessor tp = this.tp;
         if (tp != null) {
-            Object otherScName = other.get(SERVICE_CLASS);
+            String otherScName = other.get(SERVICE_CLASS);
             if (otherScName != null) {
-                Class<?> sc = tp.getClass().getDeclaringClass();
-                if (otherScName != null && sc != null && !otherScName.equals(sc.getName())) {
-                    Class<?> serviceIface = getIfaceFromSvcClass(sc), otherIface = null;
-                    if (serviceIface != null) {
-                        try {
-                            otherIface = getIfaceFromSvcClass(Class.forName((String) otherScName));
-                        } catch (ClassNotFoundException cnfe) {}
-                    }
-                    if (otherIface == null || !otherIface.isAssignableFrom(serviceIface)) {
+                if (!verifyServiceClass(otherScName)) {
+                    // Also check for service class name alias if configured
+                    String aliasScName = SERVICE_CLASS_ALIASES.get(otherScName);
+                    if (aliasScName == null || !verifyServiceClass(aliasScName)) {
                         throw new ConfigMismatchException("service interface mismatch");
                     }
                 }

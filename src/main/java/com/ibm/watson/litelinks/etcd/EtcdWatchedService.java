@@ -24,7 +24,7 @@ import com.google.protobuf.UnsafeByteOperations;
 import com.ibm.etcd.client.EtcdClient;
 import com.ibm.etcd.client.config.EtcdClusterConfig;
 import com.ibm.etcd.client.utils.PersistentLeaseKey;
-import com.ibm.watson.litelinks.ThriftConnProp;
+import com.ibm.watson.litelinks.ServiceProperties;
 import com.ibm.watson.litelinks.server.ConfiguredService;
 import com.ibm.watson.litelinks.server.WatchedService;
 import org.slf4j.Logger;
@@ -147,7 +147,7 @@ public class EtcdWatchedService extends WatchedService {
         }
         if (privateEndpoint != null) {
             config = new HashMap<>(config);
-            config.put(ThriftConnProp.PRIVATE_ENDPOINT, privateEndpoint);
+            config.put(ServiceProperties.PRIVATE_ENDPOINT, privateEndpoint);
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })

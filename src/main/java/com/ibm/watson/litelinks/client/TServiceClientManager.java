@@ -33,7 +33,7 @@ import com.ibm.watson.litelinks.MethodInfo;
 import com.ibm.watson.litelinks.NettyTTransport;
 import com.ibm.watson.litelinks.SSLHelper;
 import com.ibm.watson.litelinks.SSLHelper.SSLParams;
-import com.ibm.watson.litelinks.ThriftConnProp;
+import com.ibm.watson.litelinks.ServiceProperties;
 import com.ibm.watson.litelinks.client.LitelinksServiceClient.ServiceInstanceInfo;
 import com.ibm.watson.litelinks.client.ServiceInstance.ServiceInstanceConfig;
 import com.ibm.watson.litelinks.client.ServiceInstanceCache.Balancers;
@@ -147,7 +147,7 @@ public class TServiceClientManager<C extends TServiceClient>
                     String serviceClassName, serviceName;
                     if (key.mplexerName != null) {
                         serviceName = key.mplexerName;
-                        serviceClassName = ThriftConnProp.MULTIPLEX_CLASS;
+                        serviceClassName = ServiceProperties.MULTIPLEX_CLASS;
                         factory = new TMultiplexClientFactory<>(factory, key.name);
                     } else {
                         serviceName = key.name;
@@ -222,7 +222,7 @@ public class TServiceClientManager<C extends TServiceClient>
             this.serviceKey = svcKey;
             this.serviceName = serviceName;
             this.serviceClassName = serviceClassName;
-            this.serviceIface = serviceClassName != null && !ThriftConnProp.MULTIPLEX_CLASS.equals(serviceClassName)
+            this.serviceIface = serviceClassName != null && !ServiceProperties.MULTIPLEX_CLASS.equals(serviceClassName)
                     ? getIfaceFromSvcClass(Class.forName(serviceClassName)) : null;
             this.ServiceUnavailableException = LitelinksExceptions.eraseStackTrace(
                     new ServiceUnavailableException(serviceName));
@@ -440,23 +440,34 @@ public class TServiceClientManager<C extends TServiceClient>
         return System.currentTimeMillis() - 691200000l / size;
     }
 
-    private static final int MD_PREFIX_LEN = ThriftConnProp.APP_METADATA_PREFIX.length();
-    private static final int MI_PREFIX_LEN = ThriftConnProp.METH_INFO_PREFIX.length();
+    private static final int MD_PREFIX_LEN = ServiceProperties.APP_METADATA_PREFIX.length();
+    private static final int MI_PREFIX_LEN = ServiceProperties.METH_INFO_PREFIX.length();
+
+    private boolean verifyServiceClass(String otherScName) {
+        if (serviceClassName == null || serviceClassName.equals(otherScName)) {
+            return true;
+        }
+        Class<?> otherIface = null;
+        if (serviceIface != null) {
+            try {
+                otherIface = getIfaceFromSvcClass(Class.forName(otherScName));
+            } catch (ClassNotFoundException cnfe) {}
+        }
+        return otherIface != null && serviceIface.isAssignableFrom(otherIface);
+    }
 
     @Override
     public ServiceInstanceConfig<C> getInstanceConfig(String hostname, int port,
             long registrationTime, String version, Map<Object, Object> connConfig) throws Exception {
-        final String sc = (String) connConfig.get(ThriftConnProp.SERVICE_CLASS);
-        if (sc != null && serviceClassName != null && !sc.equals(serviceClassName)) {
-            Class<?> otherIface = null;
-            if (serviceIface != null) {
-                try {
-                    otherIface = getIfaceFromSvcClass(Class.forName(sc));
-                } catch (ClassNotFoundException cnfe) {}
-            }
-            if (otherIface == null || !serviceIface.isAssignableFrom(otherIface)) {
-                throw new Exception("service class mismatch: expecting " + serviceClassName
-                                    + " but server is " + sc); //TODO maybe custom exception type
+        String sc = (String) connConfig.get(ServiceProperties.SERVICE_CLASS);
+        if (sc != null) {
+            if (!verifyServiceClass(sc)) {
+                // Also check for service class name alias if configured
+                String aliasScName = ServiceProperties.SERVICE_CLASS_ALIASES.get(sc);
+                if (aliasScName == null || !verifyServiceClass(aliasScName)) {
+                    throw new Exception("service class mismatch: expecting " + serviceClassName
+                            + " but server is " + sc); //TODO maybe custom exception type
+                }
             }
         }
         if (hostname == null) {
@@ -469,7 +480,7 @@ public class TServiceClientManager<C extends TServiceClient>
         ImmutableMap.Builder<String, String> metaImb = null;
         ImmutableMap.Builder<String, MethodInfo> miImb = null;
         if (connConfig != null) {
-            String val = (String) connConfig.remove(ThriftConnProp.METH_INFO_PREFIX + MethodInfo.DEFAULT);
+            String val = (String) connConfig.remove(ServiceProperties.METH_INFO_PREFIX + MethodInfo.DEFAULT);
             if (serviceIface != null && val != null) {
                 try {
                     (miImb = ImmutableMap.builder()).put(MethodInfo.DEFAULT, MethodInfo.deserialize(val));
@@ -484,13 +495,13 @@ public class TServiceClientManager<C extends TServiceClient>
                 }
                 String key = ent.getKey().toString();
                 val = ent.getValue().toString();
-                if (key.startsWith(ThriftConnProp.APP_METADATA_PREFIX)) {
+                if (key.startsWith(ServiceProperties.APP_METADATA_PREFIX)) {
                     it.remove(); // remove from connConfig
                     if (metaImb == null) {
                         metaImb = ImmutableMap.builder();
                     }
                     metaImb.put(key.substring(MD_PREFIX_LEN), val);
-                } else if (key.startsWith(ThriftConnProp.METH_INFO_PREFIX)) {
+                } else if (key.startsWith(ServiceProperties.METH_INFO_PREFIX)) {
                     it.remove();
                     if (serviceIface != null) {
                         String methName = key.substring(MI_PREFIX_LEN);
@@ -657,14 +668,14 @@ public class TServiceClientManager<C extends TServiceClient>
                 Map<String, String> metadata, Map<String, MethodInfo> methodInfos) throws Exception {
             super(version, registrationTime, metadata, methodInfos);
             // default is framed=false
-            this.framed = "true".equals(connConfig.get(ThriftConnProp.TR_FRAMED));
+            this.framed = "true".equals(connConfig.get(ServiceProperties.TR_FRAMED));
             this.protoFactory = getServiceProtocolFactory(connConfig);
 
-            this.extraInfoSupported = "true".equals(connConfig.get(ThriftConnProp.TR_EXTRA_INFO));
+            this.extraInfoSupported = "true".equals(connConfig.get(ServiceProperties.TR_EXTRA_INFO));
 
-            final boolean ssl = "true".equals(connConfig.get(ThriftConnProp.TR_SSL));
+            final boolean ssl = "true".equals(connConfig.get(ServiceProperties.TR_SSL));
             if (ssl) {
-                String protocol = (String) connConfig.get(ThriftConnProp.TR_SSL_PROTOCOL);
+                String protocol = (String) connConfig.get(ServiceProperties.TR_SSL_PROTOCOL);
                 this.sslProtocol = protocol != null ? protocol : SSLParams.getDefault().protocol;
                 this.sslContext = SSLHelper.getSslContext(sslProtocol, false, false);
             }
@@ -674,7 +685,7 @@ public class TServiceClientManager<C extends TServiceClient>
             }
 
             if (usePrivateEndpoints()) {
-                String privateEndpoint = (String) connConfig.get(ThriftConnProp.PRIVATE_ENDPOINT);
+                String privateEndpoint = (String) connConfig.get(ServiceProperties.PRIVATE_ENDPOINT);
                 if (privateEndpoint != null) {
                     Matcher m = PRIV_ENDPOINT_PATT.matcher(privateEndpoint);
                     if (!m.matches()) {
@@ -750,7 +761,7 @@ public class TServiceClientManager<C extends TServiceClient>
 
     static TProtocolFactory getServiceProtocolFactory(Map<Object, Object> props) {
         TProtocolFactory tpf = DEFAULT_TPROTOFAC;
-        String tp = (String) props.get(ThriftConnProp.TR_PROTO_FACTORY);
+        String tp = (String) props.get(ServiceProperties.TR_PROTO_FACTORY);
         if (tp != null) {
             try {
                 Class<?> tpc = Class.forName(tp);

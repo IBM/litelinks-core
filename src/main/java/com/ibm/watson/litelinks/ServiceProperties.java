@@ -15,17 +15,23 @@
  */
 package com.ibm.watson.litelinks;
 
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class ThriftConnProp {
+public final class ServiceProperties {
+    private static final Logger logger = LoggerFactory.getLogger(ServiceProperties.class);
 
-    private ThriftConnProp() {}
+    private ServiceProperties() {}
 
+    // Thrift-specific
     public static final String TR_PROTO_FACTORY = "transport.tprotocol.factory";
     public static final String TR_FRAMED = "transport.framed";
+    // Other connection properties
     public static final String TR_SSL = "transport.ssl.enabled";
     public static final String TR_SSL_PROTOCOL = "transport.ssl.protocol";
     public static final String TR_EXTRA_INFO = "transport.extrainfo_supported";
@@ -38,6 +44,35 @@ public abstract class ThriftConnProp {
 
     public static final String METH_INFO_PREFIX = "methodinfo.";
     public static final String APP_METADATA_PREFIX = "app.";
+
+    public static final Map<String, String> SERVICE_CLASS_ALIASES;
+
+    static {
+        String serviceClassAliasConfig = System.getProperty(LitelinksSystemPropNames.SERVICE_CLASS_ALIASES);
+        if (serviceClassAliasConfig == null) {
+            serviceClassAliasConfig = System.getenv(LitelinksEnvVariableNames.SERVICE_CLASS_ALIASES);
+        }
+        ImmutableMap.Builder<String, String> builder = null;
+        if (serviceClassAliasConfig != null) {
+            for (String entry : serviceClassAliasConfig.split(",")) {
+                String[] values = entry.split("=");
+                if (values.length != 2) {
+                    throw new RuntimeException("Invalid value for " + LitelinksEnvVariableNames.SERVICE_CLASS_ALIASES
+                            + " env var: " + serviceClassAliasConfig);
+                }
+                if (builder == null) {
+                    builder = ImmutableMap.builder();
+                }
+                builder.put(values[0], values[1]);
+            }
+        }
+        SERVICE_CLASS_ALIASES = builder != null ? builder.build() : Collections.emptyMap();
+        if (SERVICE_CLASS_ALIASES != null) {
+            for (Entry<String, String> ent : SERVICE_CLASS_ALIASES.entrySet()) {
+                logger.info("Configured litelinks service class name alias: " + ent.getKey() + " -> " + ent.getValue());
+            }
+        }
+    }
 
     public static void log(Logger logger, Map<Object, Object> props) {
         if (props != null && !props.isEmpty()) {

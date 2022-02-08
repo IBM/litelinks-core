@@ -56,4 +56,9 @@ public /*final*/ class LitelinksEnvVariableNames {
     public static final String ZOOKEEPER_CONNECT_STRING = ZookeeperClient.ZK_CONN_STRING_ENV_VAR;
 
     public static final String PRIVATE_DOMAIN_ID = "LL_PRIVATE_DOMAIN_ID"; //beta
+
+    /**
+     * @see LitelinksSystemPropNames#SERVICE_CLASS_ALIASES
+     */
+    public static final String SERVICE_CLASS_ALIASES = "LL_SERVICE_CLASS_ALIASES";
 }
