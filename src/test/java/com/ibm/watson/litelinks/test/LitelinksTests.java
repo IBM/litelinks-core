@@ -1708,7 +1708,7 @@ public class LitelinksTests {
 
                 returnFromLb[0] = LoadBalancer.ABORT_REQUEST; // reject all and don't fall back
 
-                // test "non-inclusive" loadbalancer function using LoadBalancer.NONE_AND_DONT_FALLBACK constant
+                // test "non-inclusive" loadbalancer function using LoadBalancer.ABORT_REQUEST constant
                 // should throw SUE despite cluster containing instances
                 try {
                     ilbClient.method_two(33, "", null);
