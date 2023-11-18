@@ -151,7 +151,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.32</version>
+      <version>1.7.36</version>
       <scope>compile</scope>
     </dependency>
 
@@ -177,7 +177,7 @@
     <dependency>
       <groupId>org.apache.thrift</groupId>
       <artifactId>libthrift</artifactId>
-      <version>0.15.0</version>
+      <version>0.19.0</version>
       <scope>compile</scope>
       <exclusions>
         <!-- these are actually optional -->
@@ -242,7 +242,7 @@
     <dependency>
       <groupId>org.apache.curator</groupId>
       <artifactId>curator-recipes</artifactId>
-      <version>5.1.0</version>
+      <version>5.3.0</version>
       <scope>compile</scope>
       <exclusions>
         <!-- use our own zk dep -->
@@ -256,7 +256,7 @@
     <dependency>
       <groupId>com.ibm.utils</groupId>
       <artifactId>kv-utils</artifactId>
-      <version>0.5.0</version>
+      <version>0.5.1</version>
       <scope>compile</scope>
     </dependency>
 
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>com.ibm.etcd</groupId>
       <artifactId>etcd-java</artifactId>
-      <version>0.0.19</version>
+      <version>0.0.24</version>
       <scope>compile</scope>
       <!-- <optional>true</optional> -->
       <exclusions>
@@ -283,7 +283,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>31.0.1-jre</version>
+      <version>32.1.3-jre</version>
       <scope>compile</scope>
     </dependency>
 
@@ -304,7 +304,7 @@
     <dependency>
       <groupId>org.apache.curator</groupId>
       <artifactId>curator-test</artifactId>
-      <version>5.1.0</version>
+      <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
     <!-- using log4j instead of slf4j-simple here so that the
@@ -313,13 +313,13 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.17.1</version>
+      <version>2.21.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.17.1</version>
+      <version>2.21.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -330,7 +330,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-annotations-api</artifactId>
-      <version>9.0.58</version>
+      <version>9.0.82</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -346,7 +346,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
-            <version>3.2.1</version>
+            <version>3.3.0</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -359,7 +359,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
